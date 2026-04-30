@@ -18,7 +18,6 @@ const STOP_WORDS = new Set([
   "can",
   "for",
   "from",
-  "gitlab",
   "how",
   "i",
   "in",
@@ -61,6 +60,11 @@ const SYNONYMS = {
 };
 
 const INTENTS = [
+  {
+    id: "overview",
+    label: "GitLab overview",
+    terms: ["gitlab", "overview", "company", "platform", "devsecops"],
+  },
   {
     id: "candidate",
     label: "Candidate readiness",
@@ -261,6 +265,9 @@ function bm25Score(queryTokens, chunk, idf, averageLength) {
 
 function inferIntent(question) {
   const normalized = question.toLowerCase();
+  if (/\b(what is gitlab|who is gitlab|tell me about gitlab|define gitlab)\b/.test(normalized)) {
+    return INTENTS.find((intent) => intent.id === "overview");
+  }
   if (/\b(remote|async|asynchronous|distributed|time ?zone)\b/.test(normalized)) {
     return INTENTS.find((intent) => intent.id === "remote");
   }
@@ -318,6 +325,17 @@ function hasPromptInjection(question) {
   return /ignore (all|the|previous)|system prompt|developer message|reveal.*instruction|jailbreak/i.test(question);
 }
 
+function hasDomainSignal(question) {
+  const normalized = question.toLowerCase();
+  if (/\b(what is gitlab|who is gitlab|tell me about gitlab|define gitlab|gitlab overview)\b/.test(normalized)) {
+    return true;
+  }
+
+  return /\b(remote|async|asynchronous|distributed|handbook|communication|meeting|decision|documentation|process|transparency|transparent|guardrail|values|culture|iteration|collaboration|results|efficiency|duo|ai|devsecops|direction|roadmap|strategy|product|platform|security|secure|verify|plan|source code|merge request|candidate|interview|employee)\b/.test(
+    normalized
+  );
+}
+
 function rerankForDiversity(scoredChunks) {
   const seenSources = new Set();
   return scoredChunks
@@ -331,6 +349,10 @@ function rerankForDiversity(scoredChunks) {
 
 function retrieve(question, history = [], limit = 6) {
   return loadIndex().then((index) => {
+    const normalizedQuestion = question.toLowerCase();
+    const isOverviewQuestion = /\b(what is gitlab|who is gitlab|tell me about gitlab|define gitlab|gitlab overview)\b/.test(
+      normalizedQuestion
+    );
     const historyContext = compactHistory(history, question);
     const currentTokens = tokenize(question);
     const queryTokens = historyContext ? [...currentTokens, ...tokenize(historyContext)] : currentTokens;
@@ -357,6 +379,7 @@ function retrieve(question, history = [], limit = 6) {
         : 0;
       const currentQuestionBoost = Math.min(0.18, currentTagOverlap * 0.045 + currentTitleOverlap * 0.06);
       const sourceSpecificBoost =
+        (isOverviewQuestion && chunk.sourceId === "gitlab-overview" ? 0.38 : 0) +
         (currentTokenSet.has("remote") && chunk.sourceId === "all-remote" ? 0.32 : 0) +
         (currentTokenSet.has("communication") && chunk.sourceId === "communication" ? 0.24 : 0) +
         (currentTokenSet.has("handbook") && currentTokenSet.has("communication") && chunk.sourceId === "communication"
@@ -384,8 +407,19 @@ function retrieve(question, history = [], limit = 6) {
 }
 
 function formatBullets(lines) {
+  const seenNormalized = new Set();
   return lines
     .filter(Boolean)
+    .filter((line) => {
+      const normalized = line
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (seenNormalized.has(normalized)) return false;
+      seenNormalized.add(normalized);
+      return true;
+    })
     .slice(0, 4)
     .map((line) => `- ${line}`)
     .join("\n");
@@ -423,8 +457,10 @@ function sourceSummary(matches) {
 function buildAnswer(question, matches, intent) {
   const primary = matches[0];
   const supportingEvidence = matches
-    .slice(0, 4)
+    .filter((match) => match.section !== "Overview" || match.sourceId !== primary.sourceId)
+    .slice(0, 5)
     .map((match) => match.text.replace(`${match.title}. `, ""))
+    .filter((line) => line !== primary.summary)
     .filter((line, index, lines) => lines.indexOf(line) === index);
 
   const practicalTakeaway = inferFollowUp(question, intent);
@@ -455,6 +491,9 @@ function inferFollowUp(question, intent) {
   }
   if (intent.id === "product") {
     return "For product understanding, map the answer back to the DevSecOps platform: how the work reduces handoffs across development, security, and operations.";
+  }
+  if (intent.id === "overview") {
+    return "For a candidate, the useful framing is: GitLab is both a DevSecOps product platform and a company that documents its operating model publicly.";
   }
   if (intent.id === "culture") {
     return "For employee behavior, treat the values as operating instructions: make work visible, prefer small improvements, and communicate with enough context that others can act.";
@@ -595,6 +634,17 @@ export async function answerQuestion(question, history = []) {
       sources: [],
       mode: "guardrail",
       intent: "Safety guardrail",
+    };
+  }
+
+  if (!hasDomainSignal(question)) {
+    return {
+      answer:
+        "I could not find enough support in the loaded GitLab Handbook and Direction material to answer that confidently. Try asking about what GitLab is, remote work, transparency, values, product direction, DevSecOps, GitLab Duo, or handbook-first work.",
+      confidence: "low",
+      sources: [],
+      mode: "retrieval",
+      intent: "Out of scope",
     };
   }
 

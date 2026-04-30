@@ -11,8 +11,9 @@ test("tokenizer expands important domain terms", () => {
 
 test("knowledge base exposes enough curated coverage", async () => {
   const stats = await getKnowledgeStats();
-  assert.ok(stats.sourceCount >= 18);
+  assert.ok(stats.sourceCount >= 19);
   assert.ok(stats.chunkCount >= stats.sourceCount * 4);
+  assert.ok(stats.categories.includes("Overview"));
   assert.ok(stats.categories.includes("Handbook"));
   assert.ok(stats.categories.includes("Direction"));
 });
@@ -21,6 +22,24 @@ test("retrieves remote-work sources for async remote questions", async () => {
   const result = await retrieveForEvaluation("How does GitLab make remote work effective?");
   const titles = result.matches.map((match) => match.title);
   assert.ok(titles.includes("All-Remote Work"));
+});
+
+test("answers broad GitLab overview questions", async () => {
+  const answer = await answerQuestion("Hi, what is GitLab?");
+  assert.notEqual(answer.confidence, "low");
+  assert.equal(answer.sources[0].id, "gitlab-overview");
+  assert.match(answer.answer, /DevSecOps platform/i);
+});
+
+test("async answer avoids duplicate lead sentence in bullets", async () => {
+  const answer = await answerQuestion("How does GitLab handle async?");
+  assert.equal(answer.sources[0].id, "all-remote");
+  const firstLine = answer.answer.split("\n")[0].replace(/^From .* material: /, "").trim();
+  const bullets = answer.answer
+    .split("\n")
+    .filter((line) => line.startsWith("- "))
+    .map((line) => line.slice(2).trim());
+  assert.ok(!bullets.includes(firstLine));
 });
 
 test("refuses unsupported questions instead of hallucinating", async () => {

@@ -1,5 +1,20 @@
 [
   {
+    "id": "gitlab-overview",
+    "title": "GitLab Overview",
+    "category": "Overview",
+    "url": "https://about.gitlab.com/",
+    "summary": "GitLab is a DevSecOps platform that helps teams plan, build, secure, and deliver software through connected workflows.",
+    "employeeUseCase": "Candidates can describe GitLab as both a product company and an operating model: a DevSecOps platform supported by transparent, handbook-first ways of working.",
+    "highlights": [
+      "GitLab brings software planning, source code, CI/CD, security, and delivery workflows into a connected platform.",
+      "The public handbook explains how GitLab operates internally, including remote work, communication, values, and decision-making.",
+      "The Direction material explains how GitLab thinks about product strategy and the DevSecOps lifecycle."
+    ],
+    "tags": ["gitlab", "overview", "company", "devsecops", "platform", "software delivery", "handbook", "direction"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
     "id": "handbook-home",
     "title": "GitLab Handbook",
     "category": "Handbook",
