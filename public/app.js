@@ -9,10 +9,8 @@ const confidenceLabel = document.querySelector("#confidenceLabel");
 const sourceCount = document.querySelector("#sourceCount");
 const chunkCount = document.querySelector("#chunkCount");
 const clearButton = document.querySelector("#clearButton");
-const copyButton = document.querySelector("#copyButton");
 
 let history = [];
-let latestAnswer = "";
 
 function markdownToHtml(text) {
   return text
@@ -81,7 +79,6 @@ async function ask(question) {
 
     pending.remove();
     addMessage("assistant", payload.answer, payload.sources);
-    latestAnswer = payload.answer;
     history.push({ role: "assistant", content: payload.answer });
     renderSources(payload.sources);
     modeLabel.textContent = payload.mode;
@@ -155,28 +152,19 @@ form.addEventListener("submit", (event) => {
 });
 
 input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
     form.requestSubmit();
   }
 });
 
 clearButton.addEventListener("click", () => {
   history = [];
-  latestAnswer = "";
   messages.innerHTML = "";
   sourceList.innerHTML = "";
   confidenceLabel.textContent = "Ready";
   modeLabel.textContent = "Retrieval";
   boot();
-});
-
-copyButton.addEventListener("click", async () => {
-  if (!latestAnswer) return;
-  await navigator.clipboard.writeText(latestAnswer);
-  copyButton.textContent = "Copied";
-  setTimeout(() => {
-    copyButton.textContent = "Copy";
-  }, 1200);
 });
 
 boot();

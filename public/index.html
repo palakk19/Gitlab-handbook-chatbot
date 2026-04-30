@@ -46,12 +46,12 @@
         </div>
 
         <div class="source-panel">
-          <h2>Evidence</h2>
+          <h2>Evidence for latest answer</h2>
           <ul id="sourceList"></ul>
         </div>
 
         <div class="source-panel source-catalog">
-          <h2>Indexed Sources</h2>
+          <h2>Indexed knowledge base</h2>
           <ul id="catalogList"></ul>
         </div>
       </section>
@@ -63,7 +63,6 @@
             <h2>Ask GitLab handbook and product-direction questions</h2>
           </div>
           <div class="header-actions">
-            <button id="copyButton" class="icon-button" aria-label="Copy latest answer" title="Copy latest answer">Copy</button>
             <button id="clearButton" class="icon-button" aria-label="Clear conversation" title="Clear conversation">Reset</button>
           </div>
         </div>
@@ -75,7 +74,10 @@
           <span>Safety checked</span>
         </div>
 
-        <div id="suggestions" class="suggestions" aria-label="Suggested questions"></div>
+        <div class="suggestion-panel" aria-label="Suggested questions">
+          <p>Suggested questions</p>
+          <div id="suggestions" class="suggestions"></div>
+        </div>
         <div id="messages" class="messages" aria-live="polite"></div>
 
         <form id="chatForm" class="composer">
