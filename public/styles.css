@@ -390,6 +390,23 @@ h2 {
   color: var(--ink);
 }
 
+.answer-label {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 11px;
+  border: 1px solid rgba(56, 214, 178, 0.26);
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: #b7f8e9;
+  background: rgba(56, 214, 178, 0.08);
+  font-size: 0.69rem;
+  font-weight: 820;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
 .message.pending {
   color: var(--muted);
 }

@@ -36,10 +36,34 @@ function escapeHtml(text) {
   });
 }
 
-function addMessage(role, content, sources = []) {
+function createAnswerLabel(mode, sources = []) {
+  if (mode === "guardrail") return "Safety guardrail";
+  if (mode === "LLM + RAG") return "Answered using LLM + RAG";
+  if (!sources.length) return "Retrieval fallback";
+
+  const topSource = sources[0];
+  const category = topSource.category || "GitLab source";
+  if (category === "Overview") return "Retrieved from GitLab public overview";
+  if (category === "Handbook") return "Retrieved from GitLab public handbook";
+  if (category === "Direction") return "Retrieved from GitLab public direction";
+  return `Retrieved from GitLab public ${category.toLowerCase()}`;
+}
+
+function addMessage(role, content, sources = [], meta = {}) {
   const node = document.createElement("article");
   node.className = `message ${role}`;
-  node.innerHTML = markdownToHtml(content);
+
+  if (role === "assistant") {
+    const label = document.createElement("div");
+    label.className = "answer-label";
+    label.textContent = createAnswerLabel(meta.mode, sources);
+    node.append(label);
+  }
+
+  const body = document.createElement("div");
+  body.className = "message-body";
+  body.innerHTML = markdownToHtml(content);
+  node.append(body);
 
   if (sources.length) {
     const sourceBlock = document.createElement("div");
@@ -78,7 +102,7 @@ async function ask(question) {
     if (!response.ok) throw new Error(payload.error || "Request failed.");
 
     pending.remove();
-    addMessage("assistant", payload.answer, payload.sources);
+    addMessage("assistant", payload.answer, payload.sources, { mode: payload.mode });
     history.push({ role: "assistant", content: payload.answer });
     renderSources(payload.sources);
     modeLabel.textContent = payload.mode;
