@@ -193,7 +193,7 @@ h2 {
 .source-panel {
   min-height: 0;
   padding: 15px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .source-panel h2 {
@@ -246,7 +246,6 @@ h2 {
 .source-catalog {
   flex: 1 1 auto;
   max-height: none;
-  overflow: auto;
 }
 
 .chat-panel {
