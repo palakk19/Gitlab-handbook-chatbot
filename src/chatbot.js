@@ -356,6 +356,9 @@ function inferFollowUp(question, intent, primary) {
   if (primary?.sourceId === "merge-request-reviewers") {
     return "So the short answer is yes: in a merge request, use the Reviewers field or sidebar to request review from the right people. Approvals can be a separate project rule.";
   }
+  if (primary?.sourceId === "merge-request-comments") {
+    return "So the short answer is yes: open the merge request, add a comment in the discussion area or on a changed line, and use threads to keep review feedback organized.";
+  }
   if (intent.id === "candidate" || normalized.includes("interview") || normalized.includes("candidate")) {
     return "For a candidate, the strongest signal is connecting your answer to GitLab's operating habits: document first, iterate quickly, preserve transparency, and tie work to measurable customer value.";
   }

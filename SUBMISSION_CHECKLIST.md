@@ -11,6 +11,7 @@ Before submitting:
 - [ ] Ask these smoke-test questions:
   - `How does GitLab make remote work effective?`
   - `How do we add reviewers in the MR in GitLab?`
+  - `How can we comment on the MR?`
   - `What should a candidate know about GitLab values?`
   - `How does AI fit into GitLab direction?`
   - `MR`

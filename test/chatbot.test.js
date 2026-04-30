@@ -24,6 +24,8 @@ test("routes common casual wording to focused sources", async () => {
     ["How should new hires ramp up?", "onboarding"],
     ["How does GitLab use merge requests?", "merge-requests"],
     ["How do we add reviewers in the MR in GitLab?", "merge-request-reviewers"],
+    ["How can we comment on the MR?", "merge-request-comments"],
+    ["Can I resolve a thread in a merge request?", "merge-request-comments"],
     ["Are we allowed to raise tickets in GitLab?", "issues-work-items"],
     ["How does GitLab handle CI/CD?", "ci-cd"],
     ["How does GitLab think about security?", "security-governance"],

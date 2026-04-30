@@ -43,6 +43,8 @@ export const SYNONYMS = {
   ci: ["continuous", "integration", "pipeline"],
   cicd: ["ci", "cd", "pipeline", "verify"],
   collaboration: ["communication", "teamwork"],
+  comment: ["discussion", "thread", "reply", "mention", "note"],
+  comments: ["discussion", "thread", "reply", "mention", "note"],
   culture: ["values", "behaviors"],
   decide: ["decision", "dri", "ownership"],
   decision: ["dri", "ownership", "accountability", "documentation"],
@@ -61,6 +63,7 @@ export const SYNONYMS = {
   security: ["secure", "vulnerability", "compliance", "governance", "risk"],
   ship: ["release", "pipeline", "ci", "cd", "verify"],
   ticket: ["issue", "work", "item", "task", "bug", "support"],
+  thread: ["discussion", "comment", "reply", "resolve"],
   transparency: ["public", "visible", "documentation"],
   workitem: ["issue", "ticket", "task"],
 };
@@ -117,10 +120,18 @@ export const TOPIC_RULES = [
     boosts: { "merge-request-reviewers": 0.78, "merge-requests": 0.12 },
   },
   {
+    id: "merge-request-comments",
+    label: "Merge request comments and threads",
+    pattern:
+      /\b(comment|comments|discuss|discussion|discussions|thread|threads|reply|replies|mention|mentions|resolve|resolved|suggest|suggestion|suggestions)\b.{0,45}\b(mr|merge request|merge requests)\b|\b(mr|merge request|merge requests)\b.{0,45}\b(comment|comments|discuss|discussion|discussions|thread|threads|reply|replies|mention|mentions|resolve|resolved|suggest|suggestion|suggestions)\b/,
+    expansions: ["merge", "request", "comment", "discussion", "thread", "reply", "mention", "resolve", "review"],
+    boosts: { "merge-request-comments": 0.82, "merge-requests": 0.12, "merge-request-reviewers": 0.06 },
+  },
+  {
     id: "merge-request",
     label: "Merge requests and code review",
     pattern:
-      /\b(merge request|merge requests|code review|review code|source code|repository|repo)\b|\b(use|create|open|make|raise|merge|review|approve|approval|gitlab|code|request|change|changes|pipeline|branch)\b.{0,35}\bmr\b|\bmr\b.{0,35}\b(use|create|open|make|raise|merge|review|approve|approval|gitlab|code|request|change|changes|pipeline|branch)\b/,
+      /\b(merge request|merge requests|code review|review code|source code|repository|repo)\b|\b(use|create|open|make|raise|merge|review|approve|approval|gitlab|code|request|change|changes|pipeline|branch|comment|discuss|discussion|thread|reply|mention|resolve|suggest)\b.{0,35}\bmr\b|\bmr\b.{0,35}\b(use|create|open|make|raise|merge|review|approve|approval|gitlab|code|request|change|changes|pipeline|branch|comment|discuss|discussion|thread|reply|mention|resolve|suggest)\b/,
     expansions: ["merge", "request", "code", "review", "source", "collaboration", "developer"],
     boosts: { "merge-requests": 0.44, "source-code-stage": 0.16, collaboration: 0.08 },
   },

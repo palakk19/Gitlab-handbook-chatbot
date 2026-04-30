@@ -47,6 +47,11 @@ const cases = [
     expectedTerms: ["reviewers", "merge request", "Reviewers field"],
   },
   {
+    question: "How can we comment on the MR?",
+    expectedSources: ["merge-request-comments"],
+    expectedTerms: ["comment", "merge request", "thread"],
+  },
+  {
     question: "Are we allowed to raise tickets in GitLab?",
     expectedSources: ["issues-work-items"],
     expectedTerms: ["Yes", "issues", "project"],

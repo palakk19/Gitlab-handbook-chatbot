@@ -46,7 +46,7 @@ npm run eval
 Expected evaluation result:
 
 ```text
-Positive evaluation: 13/13 passed
+Positive evaluation: 14/14 passed
 Negative/guardrail evaluation: 6/6 passed
 ```
 

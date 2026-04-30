@@ -2,7 +2,7 @@ import { AMBIGUOUS_KEYWORD_TERMS, DOMAIN_TERMS, INTENTS, TOPIC_RULES } from "./r
 import { rawTokens, tokenize, unique } from "./textProcessing.js";
 
 const ACTION_OR_QUESTION_PATTERN =
-  /\?|^\s*(how|what|why|when|where|can|could|should|would|do|does|is|are)\b|\b(tell|explain|define|describe|give|show|use|create|add|assign|raise|open|make|handle|prioritize|prepare|mean|connect|fit|allowed|review|approve|merge|track|plan)\b/;
+  /\?|^\s*(how|what|why|when|where|can|could|should|would|do|does|is|are)\b|\b(tell|explain|define|describe|give|show|use|create|add|assign|raise|open|make|handle|prioritize|prepare|mean|connect|fit|allowed|review|approve|merge|track|plan|comment|discuss|reply|mention|resolve|suggest)\b/;
 
 export function matchTopics(question) {
   const normalized = question.toLowerCase();
@@ -14,9 +14,17 @@ export function inferIntent(question) {
   if (routedTopic?.id === "overview") return INTENTS.find((intent) => intent.id === "overview");
   if (["async", "remote"].includes(routedTopic?.id)) return INTENTS.find((intent) => intent.id === "remote");
   if (
-    ["ai", "product", "ci-cd", "security", "planning", "merge-request", "merge-request-reviewers", "issues"].includes(
-      routedTopic?.id
-    )
+    [
+      "ai",
+      "product",
+      "ci-cd",
+      "security",
+      "planning",
+      "merge-request",
+      "merge-request-reviewers",
+      "merge-request-comments",
+      "issues",
+    ].includes(routedTopic?.id)
   ) {
     return INTENTS.find((intent) => intent.id === "product");
   }

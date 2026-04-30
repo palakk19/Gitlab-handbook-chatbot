@@ -256,6 +256,22 @@
     "lastReviewed": "2026-05-01"
   },
   {
+    "id": "merge-request-comments",
+    "title": "Merge Request Comments and Discussions",
+    "category": "GitLab Docs",
+    "url": "https://docs.gitlab.com/user/discussions/",
+    "summary": "GitLab merge requests support comments and threaded discussions so people can ask questions, leave review feedback, mention teammates, and resolve conversations near the proposed change.",
+    "employeeUseCase": "A developer reviewing a merge request can comment on the overview or on changed lines, reply in a thread, mention teammates with @username, and resolve discussions after the feedback is handled.",
+    "highlights": [
+      "Comments and discussions keep review feedback close to the merge request context.",
+      "Reviewers can comment on specific lines or files in a merge request diff.",
+      "Threads help separate different questions or feedback items during review.",
+      "Resolved discussions show which feedback has been addressed before merge."
+    ],
+    "tags": ["merge request", "mr", "comment", "comments", "discussion", "discussions", "thread", "threads", "reply", "mention", "resolve", "resolved", "review comment", "line comment", "code review"],
+    "lastReviewed": "2026-05-01"
+  },
+  {
     "id": "ci-cd",
     "title": "CI/CD and Verify",
     "category": "Direction",
