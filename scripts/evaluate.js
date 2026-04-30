@@ -26,6 +26,36 @@ const cases = [
     expectedSources: ["ai-powered-devsecops", "gitlab-duo"],
     expectedTerms: ["AI", "workflow", "DevSecOps"],
   },
+  {
+    question: "How are decisions made at GitLab?",
+    expectedSources: ["decision-making"],
+    expectedTerms: ["ownership", "decision", "documented"],
+  },
+  {
+    question: "How should new hires ramp up?",
+    expectedSources: ["onboarding"],
+    expectedTerms: ["onboarding", "handbook", "self-service"],
+  },
+  {
+    question: "How does GitLab use merge requests?",
+    expectedSources: ["merge-requests"],
+    expectedTerms: ["merge requests", "code review", "collaboration"],
+  },
+  {
+    question: "How does GitLab handle CI/CD?",
+    expectedSources: ["ci-cd", "verify-stage"],
+    expectedTerms: ["CI", "automation", "quality"],
+  },
+  {
+    question: "How does GitLab think about security?",
+    expectedSources: ["security-governance", "secure-stage"],
+    expectedTerms: ["security", "risk", "workflow"],
+  },
+  {
+    question: "How does GitLab prioritize product work?",
+    expectedSources: ["planning-prioritization", "plan-stage"],
+    expectedTerms: ["prioritization", "customer value", "ownership"],
+  },
 ];
 
 function includesAnySource(actual, expected) {

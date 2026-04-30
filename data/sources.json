@@ -135,6 +135,21 @@
     "lastReviewed": "2026-04-30"
   },
   {
+    "id": "async-communication",
+    "title": "Asynchronous Communication",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/communication/",
+    "summary": "GitLab handles asynchronous work by making written communication, documented decisions, clear ownership, and low-context updates the default way teams coordinate.",
+    "employeeUseCase": "Employees should write updates so someone in another time zone can understand the context, decision, owner, and next step without needing a live meeting.",
+    "highlights": [
+      "Async work depends on writing things down before asking for synchronous time.",
+      "Good async updates include enough context for people who were not in the original conversation.",
+      "Documented decisions make it easier for distributed teams to move forward without waiting on meetings."
+    ],
+    "tags": ["async", "asynchronous", "communication", "documentation", "decisions", "ownership", "remote", "low context"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
     "id": "communication",
     "title": "Communication",
     "category": "Handbook",
@@ -162,6 +177,111 @@
       "Reducing unnecessary meetings preserves maker time across distributed teams."
     ],
     "tags": ["meetings", "async", "communication", "documentation", "remote", "efficiency"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "decision-making",
+    "title": "Decision-Making and DRIs",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/people-group/directly-responsible-individuals/",
+    "summary": "GitLab decision-making works best when ownership is clear, context is documented, and the directly responsible individual drives the next step.",
+    "employeeUseCase": "Employees can make progress faster by naming the owner, writing the decision context, and recording the outcome where others can find it.",
+    "highlights": [
+      "Clear ownership prevents distributed teams from waiting on ambiguous consensus.",
+      "Decision records help future teammates understand why a choice was made.",
+      "The DRI concept supports accountability while still inviting input from collaborators."
+    ],
+    "tags": ["decision", "decision-making", "dri", "ownership", "accountability", "documentation", "async", "remote"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "onboarding",
+    "title": "Onboarding and Self-Service Learning",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/people-group/general-onboarding/",
+    "summary": "GitLab onboarding relies on public documentation, self-service learning, clear expectations, and repeatable processes that help new team members ramp quickly.",
+    "employeeUseCase": "A new hire should use the handbook to learn operating norms, find owners, understand values, and reduce repeated questions during ramp-up.",
+    "highlights": [
+      "Handbook-first onboarding gives new team members access to context before they need to ask someone live.",
+      "Repeatable onboarding improves consistency across locations and time zones.",
+      "Self-service documentation helps candidates understand how GitLab works before joining."
+    ],
+    "tags": ["onboarding", "new hire", "ramp", "learning", "employee", "candidate", "handbook", "self-service"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "handbook-first-work",
+    "title": "Handbook-First Work",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/",
+    "summary": "Handbook-first work means documenting processes, decisions, and operating norms in a shared source of truth before relying on private conversations.",
+    "employeeUseCase": "Employees should update the handbook or a durable artifact when they discover repeated questions, unclear process, or decisions that others will need later.",
+    "highlights": [
+      "A handbook-first habit turns repeated explanations into reusable documentation.",
+      "Durable written artifacts support transparency and async collaboration.",
+      "When the handbook is outdated, the better behavior is to improve it rather than route around it."
+    ],
+    "tags": ["handbook-first", "handbook", "documentation", "source of truth", "process", "transparency", "async"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "merge-requests",
+    "title": "Merge Requests and Code Review",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/create/",
+    "summary": "GitLab merge requests are collaboration spaces where implementation, review, discussion, and decision context stay close to the code change.",
+    "employeeUseCase": "Engineers can use merge requests to make work visible, invite feedback, document tradeoffs, and connect code review to the broader DevSecOps workflow.",
+    "highlights": [
+      "Merge requests support transparent collaboration around code changes.",
+      "Good code review improves quality while preserving context near the implementation.",
+      "MR workflows connect planning, source code, review, CI, and delivery."
+    ],
+    "tags": ["merge request", "mr", "code review", "source code", "create", "collaboration", "developer experience", "devsecops"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "ci-cd",
+    "title": "CI/CD and Verify",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/verify/",
+    "summary": "GitLab CI/CD and Verify help teams automate tests, get fast feedback, and reduce delivery risk before software reaches users.",
+    "employeeUseCase": "Engineering candidates can explain CI/CD as a feedback system: it catches issues earlier, supports quality, and helps teams ship with more confidence.",
+    "highlights": [
+      "Fast CI feedback helps developers correct problems while context is fresh.",
+      "Automation reduces dependence on manual release checks.",
+      "Verify connects quality signals to the larger DevSecOps lifecycle."
+    ],
+    "tags": ["ci", "cd", "cicd", "pipeline", "verify", "testing", "automation", "quality", "release", "ship"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "security-governance",
+    "title": "Security and Governance",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/secure/",
+    "summary": "GitLab security direction focuses on integrating security into developer workflows so teams can identify, prioritize, and remediate risks earlier.",
+    "employeeUseCase": "Security and engineering teams can frame secure development as part of normal delivery, not as a disconnected final gate.",
+    "highlights": [
+      "Security is more effective when developers can see and fix risks inside their workflow.",
+      "Prioritization matters because teams need to know which vulnerabilities deserve attention first.",
+      "Governance and visibility help organizations manage risk across the software lifecycle."
+    ],
+    "tags": ["security", "secure", "governance", "risk", "vulnerability", "compliance", "remediation", "devsecops"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "planning-prioritization",
+    "title": "Planning and Prioritization",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/plan/",
+    "summary": "GitLab planning connects strategy to execution through visible priorities, issues, ownership, and tradeoff documentation.",
+    "employeeUseCase": "Product and engineering employees can use planning artifacts to show why a priority matters and how it connects to customer value.",
+    "highlights": [
+      "Visible planning artifacts reduce hidden context and make tradeoffs easier to inspect.",
+      "Issues and portfolio planning connect strategy to day-to-day work.",
+      "Prioritization is stronger when customer value and ownership are explicit."
+    ],
+    "tags": ["planning", "prioritization", "plan", "roadmap", "issues", "portfolio", "strategy", "customer value", "ownership"],
     "lastReviewed": "2026-04-30"
   },
   {

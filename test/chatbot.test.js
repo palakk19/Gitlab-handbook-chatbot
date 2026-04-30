@@ -11,11 +11,28 @@ test("tokenizer expands important domain terms", () => {
 
 test("knowledge base exposes enough curated coverage", async () => {
   const stats = await getKnowledgeStats();
-  assert.ok(stats.sourceCount >= 19);
+  assert.ok(stats.sourceCount >= 20);
   assert.ok(stats.chunkCount >= stats.sourceCount * 4);
   assert.ok(stats.categories.includes("Overview"));
   assert.ok(stats.categories.includes("Handbook"));
   assert.ok(stats.categories.includes("Direction"));
+});
+
+test("routes common casual wording to focused sources", async () => {
+  const cases = [
+    ["How are decisions made at GitLab?", "decision-making"],
+    ["How should new hires ramp up?", "onboarding"],
+    ["How does GitLab use merge requests?", "merge-requests"],
+    ["How does GitLab handle CI/CD?", "ci-cd"],
+    ["How does GitLab think about security?", "security-governance"],
+    ["How does GitLab prioritize product work?", "planning-prioritization"],
+  ];
+
+  for (const [question, expectedSource] of cases) {
+    const answer = await answerQuestion(question);
+    assert.equal(answer.sources[0].id, expectedSource, question);
+    assert.notEqual(answer.confidence, "low", question);
+  }
 });
 
 test("retrieves remote-work sources for async remote questions", async () => {
@@ -33,7 +50,8 @@ test("answers broad GitLab overview questions", async () => {
 
 test("async answer avoids duplicate lead sentence in bullets", async () => {
   const answer = await answerQuestion("How does GitLab handle async?");
-  assert.equal(answer.sources[0].id, "all-remote");
+  assert.equal(answer.sources[0].id, "async-communication");
+  assert.match(answer.answer, /written communication|documented decisions|low-context updates/i);
   const firstLine = answer.answer.split("\n")[0].replace(/^From .* material: /, "").trim();
   const bullets = answer.answer
     .split("\n")
@@ -63,7 +81,7 @@ test("new standalone questions are not dragged toward previous answers", async (
   history.push({ role: "assistant", content: first.answer });
 
   const second = await answerQuestion("What does handbook-first communication mean in practice?", history);
-  assert.equal(second.sources[0].id, "communication");
+  assert.equal(second.sources[0].id, "handbook-first-work");
   history.push({ role: "user", content: "What does handbook-first communication mean in practice?" });
   history.push({ role: "assistant", content: second.answer });
 
