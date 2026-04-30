@@ -14,6 +14,7 @@ The chatbot supports:
 - questions about GitLab's product direction, DevSecOps platform strategy, AI, GitLab Duo, Secure, Verify, Plan, and source-code workflows;
 - follow-up questions using recent conversation context;
 - source citations with relevance scores and source sections;
+- clarification for vague keyword-only prompts instead of over-answering from a single trigger word;
 - low-confidence refusal when the loaded material does not support an answer;
 - prompt-injection handling.
 
@@ -22,8 +23,10 @@ The chatbot supports:
 The system has three layers:
 
 1. **Knowledge base**: `data/sources.json` contains curated GitLab Handbook and Direction source cards with summaries, highlights, employee use cases, tags, and official URLs.
-2. **Retrieval engine**: `src/chatbot.js` chunks each source into overview, evidence, and employee-use-case sections. It scores chunks using a hybrid retrieval method: BM25, TF-IDF cosine similarity, tag overlap, source weighting, and query-intent boosts.
-3. **Answer layer**: the app creates a deterministic grounded answer from retrieved evidence. If `OPENAI_API_KEY` or `GEMINI_API_KEY` is configured, the top retrieved chunks are passed to the model for more natural final wording.
+2. **Query understanding**: `src/queryAnalysis.js` decides whether the input is answerable, ambiguous, unsupported, or unsafe before retrieval begins.
+3. **Retrieval engine**: `src/chatbot.js` chunks each source into overview, evidence, and employee-use-case sections. It scores chunks using a hybrid retrieval method: BM25, TF-IDF cosine similarity, tag overlap, source weighting, query-intent boosts, and full-query overlap.
+4. **Answerability layer**: retrieved chunks are checked for topic support and meaningful overlap before the chatbot answers.
+5. **Answer layer**: the app creates a deterministic grounded answer from retrieved evidence. If `OPENAI_API_KEY` or `GEMINI_API_KEY` is configured, the top retrieved chunks are passed to the model for more natural final wording.
 
 ## Key Decisions
 
@@ -32,7 +35,8 @@ The system has three layers:
 - **Chunk-level evidence**: source pages are split into smaller evidence units, improving answer precision.
 - **Transparent UI**: the app displays source count, chunk count, mode, confidence, cited sources, and source sections.
 - **Guardrails**: unsupported questions return a low-confidence refusal, and prompt-injection attempts are blocked.
-- **Evaluation-first engineering**: `npm test` and `npm run eval` provide repeatable proof that the chatbot retrieves and answers expected topics.
+- **Context-aware retrieval**: vague inputs like `MR`, `async`, or a random sentence containing `pipeline` ask for clarification instead of producing a canned answer.
+- **Evaluation-first engineering**: `npm test` and `npm run eval` provide repeatable proof that the chatbot retrieves expected topics and rejects weak prompts.
 
 ## Product Thinking
 
@@ -47,6 +51,7 @@ Beyond the basic brief, the project adds:
 - source-section transparency;
 - candidate-focused answer framing;
 - prompt-injection guardrail;
+- query clarification and answerability scoring;
 - optional OpenAI and Gemini providers;
 - evaluation script with pass/fail criteria;
 - deploy-ready `render.yaml`;
@@ -65,7 +70,8 @@ The evaluation suite covers common project-success questions:
 Current result:
 
 ```text
-Evaluation: 5/5 passed
+Positive evaluation: 13/13 passed
+Negative/guardrail evaluation: 6/6 passed
 ```
 
 ## Limitations and Future Work

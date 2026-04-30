@@ -23,6 +23,8 @@ test("routes common casual wording to focused sources", async () => {
     ["How are decisions made at GitLab?", "decision-making"],
     ["How should new hires ramp up?", "onboarding"],
     ["How does GitLab use merge requests?", "merge-requests"],
+    ["How do we add reviewers in the MR in GitLab?", "merge-request-reviewers"],
+    ["Are we allowed to raise tickets in GitLab?", "issues-work-items"],
     ["How does GitLab handle CI/CD?", "ci-cd"],
     ["How does GitLab think about security?", "security-governance"],
     ["How does GitLab prioritize product work?", "planning-prioritization"],
@@ -33,6 +35,55 @@ test("routes common casual wording to focused sources", async () => {
     assert.equal(answer.sources[0].id, expectedSource, question);
     assert.notEqual(answer.confidence, "low", question);
   }
+});
+
+test("asks for clarification on vague keyword-only or keyword-stuffed prompts", async () => {
+  const bare = await answerQuestion("MR");
+  assert.equal(bare.mode, "clarification");
+  assert.equal(bare.sources.length, 0);
+  assert.match(bare.answer, /MR usually means Merge Request/i);
+
+  const vague = await answerQuestion("I don't know anything, MR");
+  assert.equal(vague.mode, "clarification");
+  assert.equal(vague.sources.length, 0);
+
+  const unrelated = await answerQuestion(
+    "I am speaking anything just to prove that this is a very vague sentence. It has nothing to do, but I am using the word 'MR'."
+  );
+  assert.equal(unrelated.mode, "clarification");
+  assert.equal(unrelated.sources.length, 0);
+
+  const asyncOnly = await answerQuestion("async");
+  assert.equal(asyncOnly.mode, "clarification");
+  assert.equal(asyncOnly.sources.length, 0);
+
+  const randomPipeline = await answerQuestion(
+    "This sentence is intentionally random and only contains the word pipeline."
+  );
+  assert.equal(randomPipeline.mode, "clarification");
+  assert.equal(randomPipeline.sources.length, 0);
+
+  const aiOnly = await answerQuestion("AI");
+  assert.equal(aiOnly.mode, "clarification");
+  assert.equal(aiOnly.sources.length, 0);
+
+  const undefinedMr = await answerQuestion("What is MR");
+  assert.equal(undefinedMr.mode, "clarification");
+  assert.equal(undefinedMr.sources.length, 0);
+
+  const randomSecurity = await answerQuestion("I am just writing random words with security included.");
+  assert.equal(randomSecurity.mode, "clarification");
+  assert.equal(randomSecurity.sources.length, 0);
+});
+
+test("still answers concise questions when they include GitLab context", async () => {
+  const mr = await answerQuestion("What is MR in GitLab?");
+  assert.equal(mr.sources[0].id, "merge-requests");
+  assert.notEqual(mr.confidence, "low");
+
+  const pipeline = await answerQuestion("What is GitLab pipeline?");
+  assert.equal(pipeline.sources[0].id, "ci-cd");
+  assert.notEqual(pipeline.confidence, "low");
 });
 
 test("retrieves remote-work sources for async remote questions", async () => {

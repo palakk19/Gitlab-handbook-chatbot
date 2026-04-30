@@ -42,6 +42,16 @@ const cases = [
     expectedTerms: ["merge requests", "code review", "collaboration"],
   },
   {
+    question: "How do we add reviewers in the MR in GitLab?",
+    expectedSources: ["merge-request-reviewers"],
+    expectedTerms: ["reviewers", "merge request", "Reviewers field"],
+  },
+  {
+    question: "Are we allowed to raise tickets in GitLab?",
+    expectedSources: ["issues-work-items"],
+    expectedTerms: ["Yes", "issues", "project"],
+  },
+  {
     question: "How does GitLab handle CI/CD?",
     expectedSources: ["ci-cd", "verify-stage"],
     expectedTerms: ["CI", "automation", "quality"],
@@ -55,6 +65,34 @@ const cases = [
     question: "How does GitLab prioritize product work?",
     expectedSources: ["planning-prioritization", "plan-stage"],
     expectedTerms: ["prioritization", "customer value", "ownership"],
+  },
+];
+
+const negativeCases = [
+  {
+    question: "MR",
+    expectedMode: "clarification",
+  },
+  {
+    question: "What is MR",
+    expectedMode: "clarification",
+  },
+  {
+    question: "async",
+    expectedMode: "clarification",
+  },
+  {
+    question: "This sentence is intentionally random and only contains the word pipeline.",
+    expectedMode: "clarification",
+  },
+  {
+    question: "I am just writing random words with security included.",
+    expectedMode: "clarification",
+  },
+  {
+    question: "What is the cafeteria menu at GitLab today?",
+    expectedMode: "retrieval",
+    expectedConfidence: "low",
   },
 ];
 
@@ -92,9 +130,32 @@ for (const testCase of cases) {
   });
 }
 
-console.table(rows);
-console.log(`\nEvaluation: ${passed}/${cases.length} passed`);
+let negativePassed = 0;
+const negativeRows = [];
 
-if (passed !== cases.length) {
+for (const testCase of negativeCases) {
+  const answer = await answerQuestion(testCase.question);
+  const modePass = answer.mode === testCase.expectedMode;
+  const confidencePass = testCase.expectedConfidence ? answer.confidence === testCase.expectedConfidence : true;
+  const sourcesPass = testCase.expectedConfidence === "low" ? answer.sources.length === 0 : true;
+  const pass = modePass && confidencePass && sourcesPass;
+
+  if (pass) negativePassed += 1;
+
+  negativeRows.push({
+    question: testCase.question,
+    pass,
+    mode: answer.mode,
+    confidence: answer.confidence,
+    sources: answer.sources.map((source) => source.id).join(", "),
+  });
+}
+
+console.table(rows);
+console.log(`\nPositive evaluation: ${passed}/${cases.length} passed`);
+console.table(negativeRows);
+console.log(`\nNegative/guardrail evaluation: ${negativePassed}/${negativeCases.length} passed`);
+
+if (passed !== cases.length || negativePassed !== negativeCases.length) {
   process.exitCode = 1;
 }

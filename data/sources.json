@@ -240,6 +240,22 @@
     "lastReviewed": "2026-04-30"
   },
   {
+    "id": "merge-request-reviewers",
+    "title": "Merge Request Reviewers",
+    "category": "GitLab Docs",
+    "url": "https://docs.gitlab.com/user/project/merge_requests/reviews/",
+    "summary": "GitLab merge requests can have reviewers: people requested to review proposed changes before the work is merged.",
+    "employeeUseCase": "A developer who opens a merge request can add or change reviewers from the merge request page/sidebar so the right people are asked to review the change.",
+    "highlights": [
+      "Reviewers are used to request code review on a merge request.",
+      "The Reviewers field or sidebar keeps review ownership visible on the merge request.",
+      "Reviewers and approvals are related but not identical; approval rules can be configured separately.",
+      "Adding reviewers helps route feedback while keeping discussion, implementation context, and decisions near the code change."
+    ],
+    "tags": ["merge request", "mr", "reviewer", "reviewers", "add reviewer", "assign reviewer", "request review", "review", "approval", "approvals", "code review"],
+    "lastReviewed": "2026-05-01"
+  },
+  {
     "id": "ci-cd",
     "title": "CI/CD and Verify",
     "category": "Direction",
@@ -283,6 +299,22 @@
     ],
     "tags": ["planning", "prioritization", "plan", "roadmap", "issues", "portfolio", "strategy", "customer value", "ownership"],
     "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "issues-work-items",
+    "title": "Issues and Work Items",
+    "category": "GitLab Docs",
+    "url": "https://docs.gitlab.com/user/project/issues/",
+    "summary": "Yes. In GitLab, the closest product concept to raising a ticket is creating an issue or work item in a project to track tasks, bugs, feature proposals, support requests, or planned work.",
+    "employeeUseCase": "A new GitLab user should usually think 'create an issue' rather than 'raise a ticket'; issues belong to projects and can be discussed, assigned, labeled, prioritized, and tracked on boards.",
+    "highlights": [
+      "GitLab issues help teams plan, track, discuss, and deliver work.",
+      "Issues can track feature proposals, tasks, support requests, and bug reports.",
+      "Users can create issues from projects, groups, existing issues, issue boards, email, URLs with prefilled values, or Service Desk.",
+      "Creating issues requires access to the relevant project, such as Guest, Planner, Reporter, Developer, Maintainer, or Owner permissions."
+    ],
+    "tags": ["issue", "issues", "ticket", "tickets", "work item", "work items", "bug", "task", "support request", "feature proposal", "project", "board"],
+    "lastReviewed": "2026-05-01"
   },
   {
     "id": "direction-home",

@@ -38,6 +38,7 @@ function escapeHtml(text) {
 
 function createAnswerLabel(mode, sources = []) {
   if (mode === "guardrail") return "Safety guardrail";
+  if (mode === "clarification") return "Clarification needed";
   if (mode === "LLM + RAG") return "Answered using LLM + RAG";
   if (!sources.length) return "Retrieval fallback";
 
@@ -46,6 +47,7 @@ function createAnswerLabel(mode, sources = []) {
   if (category === "Overview") return "Retrieved from GitLab public overview";
   if (category === "Handbook") return "Retrieved from GitLab public handbook";
   if (category === "Direction") return "Retrieved from GitLab public direction";
+  if (category === "GitLab Docs") return "Retrieved from GitLab public docs";
   return `Retrieved from GitLab public ${category.toLowerCase()}`;
 }
 

@@ -7,7 +7,9 @@ It is designed to stand out in a crowded candidate pool by combining a polished 
 ## Features
 
 - **Hybrid retrieval** over curated GitLab Handbook and Direction sources.
-- **Chunk-level scoring** using BM25, TF-IDF cosine similarity, tag overlap, source weights, and intent boosts.
+- **Query understanding layer** that separates real GitLab questions from vague keyword-only prompts.
+- **Chunk-level scoring** using BM25, TF-IDF cosine similarity, tag overlap, source weights, intent boosts, and full-query overlap.
+- **Answerability checks** that refuse or clarify when retrieved evidence is too weak.
 - **Conversation-aware follow-ups** using recent chat history.
 - **Transparency UI** with confidence, mode, relevant source sections, and source links.
 - **Guardrails** for unsupported questions and prompt-injection attempts.
@@ -44,7 +46,8 @@ npm run eval
 Expected evaluation result:
 
 ```text
-Evaluation: 5/5 passed
+Positive evaluation: 13/13 passed
+Negative/guardrail evaluation: 6/6 passed
 ```
 
 ## Optional LLM Mode
@@ -87,7 +90,10 @@ This writes `data/sources.generated.json`. Review generated content before mergi
 ├── public/                  # Browser UI
 ├── scripts/evaluate.js      # Retrieval/answer quality evaluation
 ├── scripts/ingest.js        # Public page ingestion helper
-├── src/chatbot.js           # Retrieval, ranking, guardrails, optional LLM calls
+├── src/chatbot.js           # RAG orchestration, ranking, answer generation
+├── src/queryAnalysis.js     # Query intent, ambiguity, and clarification policy
+├── src/ragConfig.js         # Domain rules, synonyms, topics, and intents
+├── src/textProcessing.js    # Tokenization and normalization
 ├── test/chatbot.test.js     # Node test suite
 ├── server.js                # Dependency-free Node HTTP server
 └── PROJECT_WRITEUP.md       # Submission write-up

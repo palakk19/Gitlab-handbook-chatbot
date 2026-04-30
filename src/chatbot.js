@@ -1,237 +1,25 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import {
+  analyzeQuery,
+  buildClarificationAnswer,
+  compactHistory,
+  hasDomainSignal,
+  hasPromptInjection,
+  inferIntent,
+  inferIntents,
+  matchTopics,
+  needsClarification,
+} from "./queryAnalysis.js";
+import { tokenize, unique } from "./textProcessing.js";
+
+export { tokenize } from "./textProcessing.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sourcesPath = join(__dirname, "..", "data", "sources.json");
 
-const STOP_WORDS = new Set([
-  "a",
-  "about",
-  "an",
-  "and",
-  "are",
-  "as",
-  "at",
-  "be",
-  "by",
-  "can",
-  "for",
-  "from",
-  "how",
-  "i",
-  "in",
-  "is",
-  "it",
-  "of",
-  "on",
-  "or",
-  "our",
-  "should",
-  "that",
-  "the",
-  "their",
-  "this",
-  "to",
-  "what",
-  "when",
-  "where",
-  "which",
-  "who",
-  "why",
-  "with",
-  "you",
-]);
-
-const SYNONYMS = {
-  ai: ["artificial", "intelligence", "duo"],
-  async: ["asynchronous", "remote", "distributed", "documentation", "decision"],
-  candidate: ["interview", "hiring", "employee", "onboarding"],
-  ci: ["continuous", "integration", "pipeline"],
-  cicd: ["ci", "cd", "pipeline", "verify"],
-  collaboration: ["communication", "teamwork"],
-  culture: ["values", "behaviors"],
-  decide: ["decision", "dri", "ownership"],
-  decision: ["dri", "ownership", "accountability", "documentation"],
-  devsecops: ["development", "security", "operations", "platform"],
-  direction: ["strategy", "roadmap", "vision"],
-  handbook: ["documentation", "manual", "process", "source", "truth"],
-  hire: ["onboarding", "candidate", "employee"],
-  meeting: ["sync", "synchronous", "communication"],
-  mr: ["merge", "request", "code", "review"],
-  onboarding: ["new", "hire", "ramp", "learning"],
-  planning: ["prioritization", "roadmap", "issues", "strategy"],
-  prioritize: ["prioritization", "planning", "customer", "value"],
-  release: ["ship", "ci", "cd", "pipeline"],
-  remote: ["distributed", "asynchronous", "allremote"],
-  security: ["secure", "vulnerability", "compliance", "governance", "risk"],
-  ship: ["release", "pipeline", "ci", "cd", "verify"],
-  transparency: ["public", "visible", "documentation"],
-};
-
-const TOPIC_RULES = [
-  {
-    id: "overview",
-    label: "GitLab overview",
-    pattern: /\b(what is gitlab|who is gitlab|tell me about gitlab|define gitlab|gitlab overview)\b/,
-    expansions: ["overview", "company", "devsecops", "platform", "handbook", "direction"],
-    boosts: { "gitlab-overview": 0.42, "devsecops-platform": 0.12 },
-  },
-  {
-    id: "async",
-    label: "Asynchronous communication",
-    pattern: /\b(async|asynchronous|async-first|async work|written update|low[- ]context)\b/,
-    expansions: ["asynchronous", "communication", "documentation", "decision", "ownership", "remote", "meeting"],
-    boosts: { "async-communication": 0.44, communication: 0.18, meetings: 0.12, "all-remote": 0.08 },
-  },
-  {
-    id: "remote",
-    label: "Remote operating model",
-    pattern: /\b(remote|distributed|all[- ]remote|time ?zone|timezone|culture)\b/,
-    expansions: ["remote", "distributed", "asynchronous", "documentation", "ownership"],
-    boosts: { "all-remote": 0.78, "async-communication": 0.1, communication: 0.08 },
-  },
-  {
-    id: "decision",
-    label: "Decision-making",
-    pattern: /\b(decide|decides|decision|decisions|decision-making|dri|owner|owners|ownership|accountable|accountability)\b/,
-    expansions: ["decision", "dri", "ownership", "accountability", "documentation", "async"],
-    boosts: { "decision-making": 0.42, communication: 0.12, transparency: 0.1 },
-  },
-  {
-    id: "handbook-first",
-    label: "Handbook-first work",
-    pattern: /\b(handbook-first|source of truth|single source|document first|documentation-first)\b/,
-    expansions: ["handbook", "documentation", "source", "truth", "process", "transparency"],
-    boosts: { "handbook-first-work": 0.42, "handbook-home": 0.2, communication: 0.08 },
-  },
-  {
-    id: "onboarding",
-    label: "Onboarding",
-    pattern: /\b(onboard|onboarding|new hire|new employee|ramp|first week|joining)\b/,
-    expansions: ["onboarding", "new", "hire", "employee", "handbook", "learning", "values"],
-    boosts: { onboarding: 0.42, "handbook-home": 0.12, values: 0.1 },
-  },
-  {
-    id: "merge-request",
-    label: "Merge requests and code review",
-    pattern: /\b(merge request|merge requests|mrs?\b|code review|review code|source code|repository|repo)\b/,
-    expansions: ["merge", "request", "code", "review", "source", "collaboration", "developer"],
-    boosts: { "merge-requests": 0.44, "source-code-stage": 0.16, collaboration: 0.08 },
-  },
-  {
-    id: "ci-cd",
-    label: "CI/CD and testing",
-    pattern: /\b(ci\/cd|cicd|pipeline|pipelines|testing|tests|automation|verify|release|ship)\b/,
-    expansions: ["ci", "cd", "pipeline", "verify", "testing", "automation", "quality", "release"],
-    boosts: { "ci-cd": 0.44, "verify-stage": 0.2, "devsecops-platform": 0.08 },
-  },
-  {
-    id: "security",
-    label: "Security and governance",
-    pattern: /\b(security|secure|vulnerability|vulnerabilities|compliance|governance|risk|remediation)\b/,
-    expansions: ["security", "secure", "vulnerability", "governance", "risk", "remediation", "devsecops"],
-    boosts: { "security-governance": 0.44, "secure-stage": 0.2, "devsecops-platform": 0.08 },
-  },
-  {
-    id: "planning",
-    label: "Planning and prioritization",
-    pattern: /\b(planning|prioritize|prioritization|roadmap|issues|portfolio|customer value|tradeoff|tradeoffs)\b/,
-    expansions: ["planning", "prioritization", "roadmap", "issues", "strategy", "customer", "value"],
-    boosts: { "planning-prioritization": 0.44, "plan-stage": 0.2, "direction-home": 0.1 },
-  },
-  {
-    id: "values",
-    label: "Culture and values",
-    pattern: /\b(values|culture|iteration|transparency|transparent|guardrail|guardrails|collaboration|results|efficiency|diversity|inclusion)\b/,
-    expansions: ["values", "culture", "transparency", "iteration", "collaboration", "results", "efficiency"],
-    boosts: { values: 0.06, transparency: 0.72, iteration: 0.1, collaboration: 0.1 },
-  },
-  {
-    id: "ai",
-    label: "AI and GitLab Duo",
-    pattern: /\b(ai|artificial intelligence|duo|agent|agents)\b/,
-    expansions: ["ai", "duo", "workflow", "devsecops", "security", "product"],
-    boosts: { "ai-powered-devsecops": 0.38, "gitlab-duo": 0.32 },
-  },
-  {
-    id: "product",
-    label: "Product direction",
-    pattern: /\b(direction|strategy|product|devsecops|platform|roadmap|vision)\b/,
-    expansions: ["direction", "strategy", "product", "devsecops", "platform", "roadmap"],
-    boosts: { "direction-home": 0.26, "devsecops-platform": 0.2 },
-  },
-];
-
-const INTENTS = [
-  {
-    id: "overview",
-    label: "GitLab overview",
-    terms: ["gitlab", "overview", "company", "platform", "devsecops"],
-  },
-  {
-    id: "candidate",
-    label: "Candidate readiness",
-    terms: ["candidate", "interview", "job", "hiring", "employee", "new"],
-  },
-  {
-    id: "culture",
-    label: "Culture and values",
-    terms: ["culture", "values", "transparency", "iteration", "collaboration", "results"],
-  },
-  {
-    id: "remote",
-    label: "Remote operating model",
-    terms: ["remote", "async", "asynchronous", "distributed", "meeting", "timezone"],
-  },
-  {
-    id: "product",
-    label: "Product direction",
-    terms: ["direction", "strategy", "roadmap", "product", "devsecops", "duo", "platform"],
-  },
-  {
-    id: "process",
-    label: "Ways of working",
-    terms: ["handbook", "process", "documentation", "decision", "communication"],
-  },
-];
-
 let cachedIndex;
-
-function unique(tokens) {
-  return [...new Set(tokens)];
-}
-
-function normalizeToken(token) {
-  if (token === "allremote") return "remote";
-  if (token === "devsecops") return "devsecops";
-  if (token === "kubernetes") return "kubernetes";
-  if (token.endsWith("ies") && token.length > 5) return `${token.slice(0, -3)}y`;
-  if (token.endsWith("sions") && token.length > 7) return token.slice(0, -1);
-  if (token.endsWith("ests") && token.length > 6) return token.slice(0, -1);
-  if (token.endsWith("ing") && token.length > 6) return token.slice(0, -3);
-  if (token.endsWith("ed") && token.length > 5) return token.slice(0, -2);
-  if (token.endsWith("s") && token.length > 4) return token.slice(0, -1);
-  return token;
-}
-
-export function tokenize(text) {
-  const baseTokens =
-    String(text)
-      .toLowerCase()
-      .replace(/all[- ]remote/g, "allremote")
-      .replace(/devsecops/g, "devsecops")
-      .match(/[a-z0-9]+/g)
-      ?.map(normalizeToken)
-      .filter((token) => (token.length > 2 || ["ai", "ci", "cd"].includes(token)) && !STOP_WORDS.has(token)) || [];
-
-  const expanded = [];
-  for (const token of baseTokens) {
-    expanded.push(token);
-    if (SYNONYMS[token]) expanded.push(...SYNONYMS[token]);
-  }
-  return expanded;
-}
 
 function termFrequency(tokens) {
   const counts = new Map();
@@ -369,73 +157,6 @@ function bm25Score(queryTokens, chunk, idf, averageLength) {
   return score;
 }
 
-function inferIntent(question) {
-  const routedTopic = matchTopics(question)[0];
-  if (routedTopic?.id === "overview") return INTENTS.find((intent) => intent.id === "overview");
-  if (["async", "remote"].includes(routedTopic?.id)) return INTENTS.find((intent) => intent.id === "remote");
-  if (["ai", "product", "ci-cd", "security", "planning", "merge-request"].includes(routedTopic?.id)) {
-    return INTENTS.find((intent) => intent.id === "product");
-  }
-  if (["handbook-first", "decision", "onboarding"].includes(routedTopic?.id)) {
-    return INTENTS.find((intent) => intent.id === "process");
-  }
-  if (routedTopic?.id === "values") {
-    return INTENTS.find((intent) => intent.id === "culture");
-  }
-
-  const tokens = tokenize(question);
-  const scores = INTENTS.map((intent) => ({
-    ...intent,
-    score: intent.terms.reduce((sum, term) => sum + tokens.filter((token) => token === term).length, 0),
-  })).sort((a, b) => b.score - a.score || a.terms.length - b.terms.length);
-
-  return scores[0]?.score ? scores[0] : { id: "general", label: "General handbook search", score: 0 };
-}
-
-function inferIntents(question) {
-  const tokens = tokenize(question);
-  return INTENTS.map((intent) => ({
-    ...intent,
-    score: intent.terms.reduce((sum, term) => sum + tokens.filter((token) => token === term).length, 0),
-  }))
-    .filter((intent) => intent.score > 0)
-    .sort((a, b) => b.score - a.score);
-}
-
-function shouldUseHistory(question) {
-  const normalized = question.toLowerCase().trim();
-  const tokenCount = tokenize(question).length;
-  return (
-    tokenCount <= 4 ||
-    /\b(that|this|it|they|them|those|same|above|earlier|previous|you mentioned)\b/.test(normalized) ||
-    /^(what about|how about|why|can you explain|tell me more|expand on)\b/.test(normalized)
-  );
-}
-
-function compactHistory(history, question) {
-  if (!shouldUseHistory(question)) return "";
-
-  return history
-    .filter((message) => message?.role === "user")
-    .map((message) => String(message.content || "").trim())
-    .filter((content) => content && content.toLowerCase() !== question.toLowerCase().trim())
-    .slice(-2)
-    .join(" ");
-}
-
-function hasPromptInjection(question) {
-  return /ignore (all|the|previous)|system prompt|developer message|reveal.*instruction|jailbreak/i.test(question);
-}
-
-function hasDomainSignal(question) {
-  return matchTopics(question).length > 0;
-}
-
-function matchTopics(question) {
-  const normalized = question.toLowerCase();
-  return TOPIC_RULES.filter((topic) => topic.pattern.test(normalized));
-}
-
 function expandQueryTokens(question, historyContext) {
   const topics = matchTopics(question);
   const baseTokens = tokenize(historyContext ? `${question} ${historyContext}` : question);
@@ -459,6 +180,7 @@ function rerankForDiversity(scoredChunks) {
 
 function retrieve(question, history = [], limit = 6) {
   return loadIndex().then((index) => {
+    const queryProfile = analyzeQuery(question);
     const historyContext = compactHistory(history, question);
     const currentTokens = tokenize(question);
     const expandedQuery = expandQueryTokens(question, historyContext);
@@ -466,6 +188,7 @@ function retrieve(question, history = [], limit = 6) {
     const intent = inferIntent(question);
     const intents = inferIntents(question);
     const currentTokenSet = new Set(currentTokens);
+    const meaningfulTokenSet = new Set(queryProfile.nonDomainTokens);
     const queryVector = vectorize(queryTokens, index.idf);
     const maxBm25 = Math.max(
       ...index.chunks.map((chunk) => bm25Score(queryTokens, chunk, index.idf, index.averageLength)),
@@ -473,25 +196,31 @@ function retrieve(question, history = [], limit = 6) {
     );
 
     const scored = index.chunks.map((chunk) => {
+      const chunkTokenSet = new Set(chunk.tokens);
       const bm25 = bm25Score(queryTokens, chunk, index.idf, index.averageLength) / maxBm25;
       const vector = cosineSimilarity(queryVector, chunk.vector);
       const tagTokens = unique(tokenize(chunk.tags.join(" ")));
       const titleTokens = unique(tokenize(chunk.title));
       const currentTagOverlap = tagTokens.filter((token) => currentTokenSet.has(token)).length;
       const currentTitleOverlap = titleTokens.filter((token) => currentTokenSet.has(token)).length;
+      const meaningfulOverlap = [...meaningfulTokenSet].filter((token) => chunkTokenSet.has(token)).length;
       const intentBoost = intents.some((matchedIntent) =>
         tagTokens.some((token) => matchedIntent.terms.includes(token))
       )
         ? 0.06
         : 0;
       const currentQuestionBoost = Math.min(0.18, currentTagOverlap * 0.045 + currentTitleOverlap * 0.06);
+      const fullQueryBoost = Math.min(0.12, meaningfulOverlap * 0.05);
       const topicBoost = expandedQuery.topics.reduce((sum, topic) => sum + (topic.boosts[chunk.sourceId] || 0), 0);
+      const topicSupported = expandedQuery.topics.some((topic) => topic.boosts[chunk.sourceId]);
 
       return {
         ...chunk,
-        score: (0.58 * bm25 + 0.24 * vector + intentBoost + currentQuestionBoost + topicBoost) * chunk.weight,
+        score: (0.55 * bm25 + 0.22 * vector + intentBoost + currentQuestionBoost + fullQueryBoost + topicBoost) * chunk.weight,
         bm25: Number(bm25.toFixed(3)),
         vector: Number(vector.toFixed(3)),
+        meaningfulOverlap,
+        topicSupported,
       };
     });
 
@@ -499,7 +228,7 @@ function retrieve(question, history = [], limit = 6) {
       .filter((chunk) => chunk.score > 0.04)
       .slice(0, limit);
 
-    return { ...index, intent, queryTokens, topics: expandedQuery.topics, matches: topChunks };
+    return { ...index, intent, queryProfile, queryTokens, topics: expandedQuery.topics, matches: topChunks };
   });
 }
 
@@ -557,6 +286,36 @@ function isBroadMatch(matches, topics) {
   return !matches.slice(0, 3).some((match) => boostedSourceIds.has(match.sourceId));
 }
 
+function assessAnswerability(result) {
+  const top = result.matches[0];
+  if (!top) return { answerable: false, reason: "no retrieved evidence", supportScore: 0 };
+
+  const topMatches = result.matches.slice(0, 3);
+  const broadMatch = isBroadMatch(result.matches, result.topics);
+  const topicSupported = topMatches.some((match) => match.topicSupported);
+  const meaningfulOverlap = topMatches.reduce((sum, match) => sum + (match.meaningfulOverlap || 0), 0);
+  const explicitContext = result.queryProfile.explicitGitLabContext;
+  const supportScore =
+    top.score +
+    (topicSupported ? 0.12 : 0) +
+    (meaningfulOverlap ? Math.min(0.1, meaningfulOverlap * 0.03) : 0) +
+    (explicitContext ? 0.05 : 0) -
+    (broadMatch ? 0.08 : 0);
+
+  return {
+    answerable: top.score >= 0.12 && (topicSupported || meaningfulOverlap > 0 || explicitContext || supportScore > 0.42),
+    reason: broadMatch ? "broad related match" : topicSupported ? "topic-supported evidence" : "lexical evidence",
+    supportScore: Number(supportScore.toFixed(3)),
+    meaningfulOverlap,
+    broadMatch,
+  };
+}
+
+function readableCategory(category) {
+  if (category === "GitLab Docs") return "docs";
+  return String(category || "source").toLowerCase();
+}
+
 function buildAnswer(question, matches, intent, topics = []) {
   const primary = matches[0];
   const supportingEvidence = matches
@@ -577,7 +336,7 @@ function buildAnswer(question, matches, intent, topics = []) {
 
   return [
     broadMatchNotice,
-    `From GitLab's public ${primary.category.toLowerCase()} material: ${primary.summary}`,
+    `From GitLab's public ${readableCategory(primary.category)} material: ${primary.summary}`,
     "",
     "What matters:",
     formatBullets(supportingEvidence),
@@ -589,8 +348,14 @@ function buildAnswer(question, matches, intent, topics = []) {
     .join("\n");
 }
 
-function inferFollowUp(question, intent) {
+function inferFollowUp(question, intent, primary) {
   const normalized = question.toLowerCase();
+  if (primary?.sourceId === "issues-work-items" || /\b(ticket|tickets|issue|issues|work item|bug|task)\b/.test(normalized)) {
+    return "So the short answer is yes, if you have access to the relevant project. In GitLab terminology, you usually create an issue or work item rather than saying you are raising a ticket.";
+  }
+  if (primary?.sourceId === "merge-request-reviewers") {
+    return "So the short answer is yes: in a merge request, use the Reviewers field or sidebar to request review from the right people. Approvals can be a separate project rule.";
+  }
   if (intent.id === "candidate" || normalized.includes("interview") || normalized.includes("candidate")) {
     return "For a candidate, the strongest signal is connecting your answer to GitLab's operating habits: document first, iterate quickly, preserve transparency, and tie work to measurable customer value.";
   }
@@ -732,6 +497,13 @@ export async function retrieveForEvaluation(question) {
   const result = await retrieve(question, [], 6);
   return {
     intent: result.intent,
+    query: {
+      topics: result.queryProfile.topics.map((topic) => topic.id),
+      domainTokens: result.queryProfile.domainTokens,
+      ambiguousTokens: result.queryProfile.ambiguousTokens,
+      enoughContext: result.queryProfile.enoughContext,
+    },
+    answerability: assessAnswerability(result),
     matches: sourceSummary(result.matches),
   };
 }
@@ -745,6 +517,16 @@ export async function answerQuestion(question, history = []) {
       sources: [],
       mode: "guardrail",
       intent: "Safety guardrail",
+    };
+  }
+
+  if (needsClarification(question)) {
+    return {
+      answer: buildClarificationAnswer(question),
+      confidence: "medium",
+      sources: [],
+      mode: "clarification",
+      intent: "Clarification needed",
     };
   }
 
@@ -762,8 +544,9 @@ export async function answerQuestion(question, history = []) {
   const result = await retrieve(question, history, 8);
   const sourceMatches = sourceSummary(result.matches);
   const topScore = result.matches[0]?.score || 0;
+  const answerability = assessAnswerability(result);
 
-  if (!sourceMatches.length || topScore < 0.12) {
+  if (!sourceMatches.length || topScore < 0.12 || !answerability.answerable) {
     return {
       answer:
         "I could not find enough support in the loaded GitLab Handbook and Direction material to answer that confidently. Try asking about remote work, transparency, values, product direction, DevSecOps, GitLab Duo, or handbook-first work.",
@@ -771,6 +554,10 @@ export async function answerQuestion(question, history = []) {
       sources: [],
       mode: "retrieval",
       intent: result.intent.label,
+      diagnostics: {
+        answerability,
+        topics: result.queryProfile.topics.map((topic) => topic.id),
+      },
     };
   }
 
@@ -784,5 +571,9 @@ export async function answerQuestion(question, history = []) {
     sources: sourceMatches.slice(0, 5),
     mode: llmAnswer ? "LLM + RAG" : "retrieval",
     intent: result.intent.label,
+    diagnostics: {
+      answerability,
+      topics: result.queryProfile.topics.map((topic) => topic.id),
+    },
   };
 }
