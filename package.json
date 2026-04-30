@@ -1,0 +1,24 @@
+{
+  "name": "gitlab-handbook-chatbot",
+  "version": "1.0.0",
+  "description": "A retrieval-augmented chatbot for GitLab Handbook and Direction content.",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "ingest": "node scripts/ingest.js",
+    "eval": "node scripts/evaluate.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "genai",
+    "chatbot",
+    "rag",
+    "gitlab",
+    "handbook"
+  ],
+  "license": "MIT"
+}

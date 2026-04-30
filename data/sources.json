@@ -1,0 +1,272 @@
+[
+  {
+    "id": "handbook-home",
+    "title": "GitLab Handbook",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/",
+    "summary": "the handbook is GitLab's public operating manual for company policies, processes, values, and team practices.",
+    "employeeUseCase": "Employees and candidates can use the handbook to self-serve context before asking for help, making onboarding and cross-functional work faster.",
+    "highlights": [
+      "The handbook acts as a single source of truth for how GitLab works.",
+      "Public documentation supports transparency, asynchronous work, and repeatable onboarding.",
+      "Handbook-first habits reduce repeated explanations and help people audit decisions later."
+    ],
+    "tags": ["handbook", "documentation", "single source of truth", "onboarding", "process", "transparency"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "values",
+    "title": "GitLab Values",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/",
+    "summary": "GitLab's values translate culture into practical behaviors: collaboration, results, efficiency, diversity-inclusion-belonging, iteration, and transparency.",
+    "employeeUseCase": "A new employee can use the values page to understand what good judgment looks like in daily work, not only in performance reviews.",
+    "highlights": [
+      "Values are written as behaviors that employees can apply in real situations.",
+      "Transparency and iteration reinforce GitLab's public, handbook-first operating model.",
+      "The values are useful for candidates because they reveal how GitLab expects people to make tradeoffs."
+    ],
+    "tags": ["values", "culture", "transparency", "iteration", "collaboration", "results", "efficiency", "candidate"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "transparency",
+    "title": "Transparency",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/#transparency",
+    "summary": "transparency at GitLab means sharing information broadly by default, documenting decisions, and making work visible while respecting sensitive information.",
+    "employeeUseCase": "Employees can reduce confusion by moving decisions, rationale, and status updates into visible artifacts that others can inspect asynchronously.",
+    "highlights": [
+      "Transparency gives people access to context they need for better decisions.",
+      "Public artifacts make it easier for candidates, customers, and employees to learn how GitLab thinks.",
+      "Transparency still requires guardrails for confidential, personal, legal, security, or customer-sensitive information."
+    ],
+    "tags": ["transparency", "public", "guardrails", "decisions", "visibility", "values"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "iteration",
+    "title": "Iteration",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/#iteration",
+    "summary": "iteration encourages small, meaningful improvements shipped quickly, with feedback used to make the next change better.",
+    "employeeUseCase": "Employees can use iteration to reduce risk: ship the smallest useful improvement, invite feedback, and keep moving.",
+    "highlights": [
+      "Iteration favors progress through small changes over waiting for a perfect large release.",
+      "Small changes help teams learn faster and lower the risk of each individual decision.",
+      "Iteration is especially useful when the full answer is not known yet."
+    ],
+    "tags": ["iteration", "small changes", "feedback", "shipping", "learning", "values"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "collaboration",
+    "title": "Collaboration",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/#collaboration",
+    "summary": "collaboration at GitLab is about helping others succeed through shared context, kindness, direct communication, and cross-functional work.",
+    "employeeUseCase": "A candidate can show culture fit by explaining how they make work easier for teammates across functions and time zones.",
+    "highlights": [
+      "Collaboration is easier when expectations and context are documented.",
+      "Direct communication and kindness can coexist in high-performing teams.",
+      "Cross-functional work improves when people make ownership and next steps explicit."
+    ],
+    "tags": ["collaboration", "communication", "culture", "teamwork", "values", "candidate"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "results",
+    "title": "Results",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/#results",
+    "summary": "results emphasizes measurable outcomes, customer value, ownership, and prioritizing work that moves important goals forward.",
+    "employeeUseCase": "Employees can connect project updates to outcomes instead of activity, which is important in remote and asynchronous environments.",
+    "highlights": [
+      "Results-oriented communication focuses on outcomes, not performative busyness.",
+      "Clear ownership helps distributed teams understand who is driving a decision or deliverable.",
+      "Customer value is a useful lens for prioritizing tradeoffs."
+    ],
+    "tags": ["results", "customer value", "ownership", "prioritization", "values"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "efficiency",
+    "title": "Efficiency",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/values/#efficiency",
+    "summary": "efficiency encourages boring solutions, reducing waste, making good tradeoffs, and using time deliberately.",
+    "employeeUseCase": "Employees can use efficiency to choose simple, maintainable solutions and avoid unnecessary process overhead.",
+    "highlights": [
+      "Efficiency is about using time and attention deliberately.",
+      "Simple solutions are often better than complex systems that are hard to maintain.",
+      "Async documentation can be more efficient than repeated synchronous explanations."
+    ],
+    "tags": ["efficiency", "simple", "tradeoffs", "time", "values", "async"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "all-remote",
+    "title": "All-Remote Work",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/company/culture/all-remote/",
+    "summary": "GitLab describes all-remote work as an intentional operating model built on documentation, asynchronous communication, clear ownership, and trust.",
+    "employeeUseCase": "Remote employees can stay effective by documenting decisions, writing with context, and avoiding unnecessary synchronous dependency chains.",
+    "highlights": [
+      "Remote work succeeds when information is written down and available without needing a meeting.",
+      "Asynchronous practices let teams collaborate across time zones while preserving focus time.",
+      "Clear ownership and documented decisions reduce ambiguity for distributed teams."
+    ],
+    "tags": ["remote", "all-remote", "async", "asynchronous", "distributed", "meetings", "documentation"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "communication",
+    "title": "Communication",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/communication/",
+    "summary": "GitLab's communication guidance emphasizes low-context writing, asynchronous updates, and making decisions discoverable.",
+    "employeeUseCase": "Employees can reduce meetings by writing updates that include context, decision history, owners, and next steps.",
+    "highlights": [
+      "Low-context communication helps people understand decisions without private background knowledge.",
+      "Async updates are preferred when a real-time meeting is not necessary.",
+      "Writing down decisions supports transparency and helps future teammates understand why choices were made."
+    ],
+    "tags": ["communication", "async", "low context", "meetings", "decisions", "writing", "documentation"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "meetings",
+    "title": "Meetings",
+    "category": "Handbook",
+    "url": "https://handbook.gitlab.com/handbook/communication/#meetings",
+    "summary": "GitLab's meeting guidance favors intentional synchronous time, clear agendas, documented outcomes, and asynchronous alternatives when possible.",
+    "employeeUseCase": "Before scheduling a meeting, employees can ask whether a written update, merge request, issue, or decision record would be more effective.",
+    "highlights": [
+      "Meetings should have a clear purpose and documented outcome.",
+      "Async communication is preferred when a meeting is not necessary.",
+      "Reducing unnecessary meetings preserves maker time across distributed teams."
+    ],
+    "tags": ["meetings", "async", "communication", "documentation", "remote", "efficiency"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "direction-home",
+    "title": "GitLab Direction",
+    "category": "Direction",
+    "url": "https://handbook.gitlab.com/handbook/product/product-processes/#the-importance-of-direction",
+    "summary": "GitLab's product process guidance treats Direction pages as a critical way to communicate where product areas are heading and why.",
+    "employeeUseCase": "Employees and candidates can use Direction pages to understand how individual features connect to GitLab's broader product strategy.",
+    "highlights": [
+      "Direction pages communicate where GitLab is investing and how product areas evolve.",
+      "The public direction format invites customers, contributors, candidates, and team members to understand priorities.",
+      "Product direction connects individual categories to the broader DevSecOps platform strategy."
+    ],
+    "tags": ["direction", "strategy", "roadmap", "product", "vision", "devsecops", "platform"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "devsecops-platform",
+    "title": "DevSecOps Platform",
+    "category": "Direction",
+    "url": "https://handbook.gitlab.com/handbook/product/product-processes/#the-importance-of-direction",
+    "summary": "GitLab positions itself around a comprehensive DevSecOps platform that supports planning, source code, CI/CD, security, observability, and collaboration across the software lifecycle.",
+    "employeeUseCase": "Product and engineering employees can explain decisions in terms of reducing handoffs between development, security, and operations.",
+    "highlights": [
+      "A single platform can reduce handoffs across development, security, and operations teams.",
+      "The product strategy focuses on connecting stages of the software delivery lifecycle.",
+      "Direction content helps employees understand customer workflows and category priorities."
+    ],
+    "tags": ["devsecops", "ci", "cd", "security", "platform", "software delivery", "lifecycle", "direction"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "ai-powered-devsecops",
+    "title": "AI-Powered DevSecOps",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/gitlab-duo-agent-platform/",
+    "summary": "GitLab's direction increasingly frames AI as a way to improve productivity, security, and software delivery across the DevSecOps lifecycle.",
+    "employeeUseCase": "Candidates can stand out by discussing AI as workflow augmentation across planning, coding, review, security, and operations rather than a single chatbot feature.",
+    "highlights": [
+      "AI features are strongest when they are grounded in the software delivery workflow.",
+      "AI should reduce friction across DevSecOps stages instead of creating another disconnected tool.",
+      "Responsible AI direction should preserve trust, security, and source visibility."
+    ],
+    "tags": ["ai", "duo", "devsecops", "product", "direction", "security", "workflow"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "gitlab-duo",
+    "title": "GitLab Duo",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/gitlab-duo-agent-platform/",
+    "summary": "GitLab Duo represents GitLab's AI capabilities for helping teams write, review, secure, and understand software inside the DevSecOps workflow.",
+    "employeeUseCase": "A product-minded answer can describe GitLab Duo as AI embedded into developer workflows with security and governance expectations.",
+    "highlights": [
+      "GitLab Duo is most relevant when the user asks about AI in GitLab's product direction.",
+      "AI assistance should be evaluated by workflow impact, not novelty alone.",
+      "Trust and source context matter when AI is used for engineering and security work."
+    ],
+    "tags": ["gitlab duo", "ai", "artificial intelligence", "product", "security", "devsecops"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "secure-stage",
+    "title": "Secure Stage Direction",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/secure/",
+    "summary": "the Secure stage direction focuses on helping teams identify, prioritize, and remediate security risks within the software delivery lifecycle.",
+    "employeeUseCase": "Employees can connect security features to the broader DevSecOps strategy by explaining how security shifts earlier and becomes part of normal delivery.",
+    "highlights": [
+      "Security is stronger when it is integrated into developer workflows.",
+      "Prioritization and remediation matter as much as detecting vulnerabilities.",
+      "Secure direction connects security work with platform-level visibility and governance."
+    ],
+    "tags": ["secure", "security", "vulnerability", "devsecops", "direction", "governance"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "verify-stage",
+    "title": "Verify Stage Direction",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/verify/",
+    "summary": "the Verify stage direction covers CI, testing, quality signals, and automation that help teams ship software with confidence.",
+    "employeeUseCase": "Engineering candidates can tie CI/CD questions to reliability, feedback speed, and reducing delivery risk.",
+    "highlights": [
+      "Fast feedback loops help teams catch problems earlier.",
+      "CI and testing are central parts of the DevSecOps lifecycle.",
+      "Automation supports consistent quality without relying only on manual review."
+    ],
+    "tags": ["verify", "ci", "testing", "automation", "quality", "direction", "devsecops"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "plan-stage",
+    "title": "Plan Stage Direction",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/plan/",
+    "summary": "the Plan stage direction focuses on portfolio planning, issue workflows, product management, and connecting strategy to execution.",
+    "employeeUseCase": "Product candidates can connect planning features to transparency, prioritization, and reducing handoffs before implementation begins.",
+    "highlights": [
+      "Planning work is more effective when priorities and tradeoffs are visible.",
+      "Issues and planning artifacts create shared context for distributed teams.",
+      "Plan direction connects strategy with the execution work that follows."
+    ],
+    "tags": ["plan", "planning", "portfolio", "issues", "product", "direction", "strategy"],
+    "lastReviewed": "2026-04-30"
+  },
+  {
+    "id": "source-code-stage",
+    "title": "Create and Source Code Direction",
+    "category": "Direction",
+    "url": "https://about.gitlab.com/direction/create/",
+    "summary": "GitLab's Create and source code direction concerns code review, repository workflows, developer experience, and collaboration around changes.",
+    "employeeUseCase": "Engineers can frame merge requests as both implementation artifacts and collaboration spaces for transparent review.",
+    "highlights": [
+      "Code review is a collaboration mechanism, not only a quality gate.",
+      "Repository workflows connect planning, implementation, review, and delivery.",
+      "Developer experience improves when context stays close to the change."
+    ],
+    "tags": ["create", "source code", "merge request", "code review", "developer experience", "direction"],
+    "lastReviewed": "2026-04-30"
+  }
+]

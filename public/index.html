@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GitLab Handbook Chatbot</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="sidebar" aria-label="Project context">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">GL</span>
+          <div>
+            <p class="eyebrow">GitLab knowledge system</p>
+            <h1>Handbook Intelligence</h1>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <span class="pulse" aria-hidden="true"></span>
+          <div>
+            <strong>Source index online</strong>
+            <p>Handbook and Direction retrieval with cited evidence.</p>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div>
+            <span>Sources</span>
+            <strong id="sourceCount">8</strong>
+          </div>
+          <div>
+            <span>Chunks</span>
+            <strong id="chunkCount">32</strong>
+          </div>
+          <div>
+            <span>Mode</span>
+            <strong id="modeLabel">Retrieval</strong>
+          </div>
+          <div>
+            <span>Confidence</span>
+            <strong id="confidenceLabel">Ready</strong>
+          </div>
+        </div>
+
+        <div class="source-panel">
+          <h2>Evidence</h2>
+          <ul id="sourceList"></ul>
+        </div>
+
+        <div class="source-panel source-catalog">
+          <h2>Indexed Sources</h2>
+          <ul id="catalogList"></ul>
+        </div>
+      </section>
+
+      <section class="chat-panel" aria-label="Chat">
+        <div class="chat-header">
+          <div>
+            <p class="eyebrow">Employee research assistant</p>
+            <h2>Ask GitLab handbook and product-direction questions</h2>
+          </div>
+          <div class="header-actions">
+            <button id="copyButton" class="icon-button" aria-label="Copy latest answer" title="Copy latest answer">Copy</button>
+            <button id="clearButton" class="icon-button" aria-label="Clear conversation" title="Clear conversation">Reset</button>
+          </div>
+        </div>
+
+        <div class="system-bar" aria-label="System status">
+          <span>RAG</span>
+          <span>Evidence cited</span>
+          <span>Conversation aware</span>
+          <span>Safety checked</span>
+        </div>
+
+        <div id="suggestions" class="suggestions" aria-label="Suggested questions"></div>
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <form id="chatForm" class="composer">
+          <label class="sr-only" for="questionInput">Ask a question</label>
+          <textarea id="questionInput" rows="2" placeholder="Ask how GitLab handles async work, transparency, or product strategy..."></textarea>
+          <button type="submit" aria-label="Send question">Send</button>
+        </form>
+      </section>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
