@@ -120,6 +120,14 @@ export const TOPIC_RULES = [
     boosts: { "merge-request-reviewers": 0.78, "merge-requests": 0.12 },
   },
   {
+    id: "comments",
+    label: "Comments and discussions",
+    pattern:
+      /\b(what|where|how|can|could|do|does|add|write|leave|make|create|reply|mention|resolve)\b.{0,45}\b(comment|comments|discussion|discussions|thread|threads|note|notes|reply|mention)\b|\b(comment|comments|discussion|discussions|thread|threads|note|notes|reply|mention)\b.{0,45}\b(gitlab|issue|issues|work item|work items|merge request|merge requests|mr|commit|commits|snippet|snippets)\b|\b(gitlab|issue|issues|work item|work items|merge request|merge requests|mr|commit|commits|snippet|snippets)\b.{0,45}\b(comment|comments|discussion|discussions|thread|threads|note|notes|reply|mention)\b/,
+    expansions: ["comment", "discussion", "thread", "reply", "mention", "note", "gitlab", "collaboration"],
+    boosts: { "comments-discussions": 0.78, "merge-request-comments": 0.22, "issues-work-items": 0.08 },
+  },
+  {
     id: "merge-request-comments",
     label: "Merge request comments and threads",
     pattern:
@@ -193,7 +201,11 @@ export const DOMAIN_TERMS = new Set([
   "ci",
   "cd",
   "cicd",
+  "comment",
+  "comments",
   "devsecops",
+  "discussion",
+  "discussions",
   "duo",
   "gitlab",
   "handbook",
@@ -208,6 +220,8 @@ export const DOMAIN_TERMS = new Set([
   "security",
   "ticket",
   "tickets",
+  "thread",
+  "threads",
   "values",
 ]);
 
@@ -217,6 +231,10 @@ export const AMBIGUOUS_KEYWORD_TERMS = new Set([
   "ci",
   "cd",
   "cicd",
+  "comment",
+  "comments",
+  "discussion",
+  "discussions",
   "duo",
   "issue",
   "issues",
@@ -229,6 +247,8 @@ export const AMBIGUOUS_KEYWORD_TERMS = new Set([
   "security",
   "ticket",
   "tickets",
+  "thread",
+  "threads",
   "values",
 ]);
 

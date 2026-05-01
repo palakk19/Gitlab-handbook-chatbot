@@ -1,11 +1,11 @@
 import { AMBIGUOUS_KEYWORD_TERMS, DOMAIN_TERMS, INTENTS, TOPIC_RULES } from "./ragConfig.js";
-import { rawTokens, tokenize, unique } from "./textProcessing.js";
+import { canonicalizeText, rawTokens, tokenize, unique } from "./textProcessing.js";
 
 const ACTION_OR_QUESTION_PATTERN =
   /\?|^\s*(how|what|why|when|where|can|could|should|would|do|does|is|are)\b|\b(tell|explain|define|describe|give|show|use|create|add|assign|raise|open|make|handle|prioritize|prepare|mean|connect|fit|allowed|review|approve|merge|track|plan|comment|discuss|reply|mention|resolve|suggest)\b/;
 
 export function matchTopics(question) {
-  const normalized = question.toLowerCase();
+  const normalized = canonicalizeText(question);
   return TOPIC_RULES.filter((topic) => topic.pattern.test(normalized));
 }
 
@@ -20,6 +20,7 @@ export function inferIntent(question) {
       "ci-cd",
       "security",
       "planning",
+      "comments",
       "merge-request",
       "merge-request-reviewers",
       "merge-request-comments",
@@ -61,12 +62,12 @@ export function hasDomainSignal(question) {
 }
 
 export function hasQuestionIntent(question) {
-  return ACTION_OR_QUESTION_PATTERN.test(question);
+  return ACTION_OR_QUESTION_PATTERN.test(canonicalizeText(question));
 }
 
 export function hasExplicitGitLabContext(question) {
   return /\b(gitlab|devsecops|handbook|merge request|merge requests|work item|work items|ci\/cd|cicd|gitlab duo|all[- ]remote)\b/i.test(
-    question
+    canonicalizeText(question)
   );
 }
 
@@ -83,6 +84,7 @@ export function analyzeQuery(question) {
 
   const enoughContext =
     topics.some((topic) => topic.id === "overview") ||
+    (topics.some((topic) => topic.id === "comments") && (questionIntent || explicitGitLabContext)) ||
     (explicitGitLabContext && questionIntent) ||
     (!keywordOnly && questionIntent && nonDomainTokens.length >= 1) ||
     (!keywordOnly && explicitGitLabContext && nonDomainTokens.length >= 1) ||
@@ -102,8 +104,12 @@ export function analyzeQuery(question) {
 }
 
 export function shouldUseHistory(question) {
-  const normalized = question.toLowerCase().trim();
+  const normalized = canonicalizeText(question);
   const tokenCount = tokenize(question).length;
+  const topics = matchTopics(question);
+  if (topics.some((topic) => topic.id === "overview")) return false;
+  if (/^\s*(what|who|define|tell me about)\s+is?\s+gitlab\b/.test(normalized)) return false;
+
   return (
     tokenCount <= 4 ||
     /\b(that|this|it|they|them|those|same|above|earlier|previous|you mentioned)\b/.test(normalized) ||

@@ -43,10 +43,16 @@ npm test
 npm run eval
 ```
 
+Or run the complete verification command:
+
+```bash
+npm run verify
+```
+
 Expected evaluation result:
 
 ```text
-Positive evaluation: 14/14 passed
+Positive evaluation: 16/16 passed
 Negative/guardrail evaluation: 6/6 passed
 ```
 
@@ -64,10 +70,11 @@ or:
 
 ```bash
 export GEMINI_API_KEY="your_key"
+export GEMINI_MODEL="gemini-2.5-flash"
 npm run dev
 ```
 
-The model only receives retrieved source context and is instructed not to invent unsupported policies.
+The model only receives retrieved source context and is instructed not to invent unsupported policies. If the optional LLM provider fails or times out, the app falls back to deterministic retrieval mode.
 
 ## Data Refresh
 
@@ -107,8 +114,9 @@ Fastest path:
 
 1. Push to GitHub.
 2. Deploy on Render using `render.yaml`.
-3. Optional: add `OPENAI_API_KEY` or `GEMINI_API_KEY`.
-4. Submit the deployed URL.
+3. Optional: add `GEMINI_API_KEY` or `OPENAI_API_KEY`.
+4. Run the smoke-test questions in `SUBMISSION_CHECKLIST.md`.
+5. Submit the deployed URL.
 
 ## Submission
 

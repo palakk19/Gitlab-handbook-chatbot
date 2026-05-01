@@ -17,10 +17,20 @@ export function normalizeToken(token) {
   return token;
 }
 
+export function canonicalizeText(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/\bwhta\b/g, "what")
+    .replace(/\bwaht\b/g, "what")
+    .replace(/\bwhats\b/g, "what is")
+    .replace(/\bgit\s+lab\b/g, "gitlab")
+    .replace(/\bmerge requests?\b/g, (match) => match)
+    .trim();
+}
+
 export function rawTokens(text) {
   return (
-    String(text)
-      .toLowerCase()
+    canonicalizeText(text)
       .replace(/all[- ]remote/g, "allremote")
       .replace(/ci\/cd/g, "cicd")
       .replace(/devsecops/g, "devsecops")

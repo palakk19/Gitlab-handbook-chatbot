@@ -52,6 +52,16 @@ const cases = [
     expectedTerms: ["comment", "merge request", "thread"],
   },
   {
+    question: "What is a comment in GitLab?",
+    expectedSources: ["comments-discussions"],
+    expectedTerms: ["comment", "discussion", "work"],
+  },
+  {
+    question: "whta is gitlab?",
+    expectedSources: ["gitlab-overview"],
+    expectedTerms: ["DevSecOps", "platform", "software"],
+  },
+  {
     question: "Are we allowed to raise tickets in GitLab?",
     expectedSources: ["issues-work-items"],
     expectedTerms: ["Yes", "issues", "project"],

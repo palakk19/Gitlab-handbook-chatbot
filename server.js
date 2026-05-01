@@ -18,6 +18,19 @@ const mimeTypes = {
   ".svg": "image/svg+xml",
 };
 
+function sanitizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+
+  return history
+    .filter((message) => ["user", "assistant"].includes(message?.role))
+    .map((message) => ({
+      role: message.role,
+      content: String(message.content || "").slice(0, 4_000),
+    }))
+    .filter((message) => message.content.trim())
+    .slice(-8);
+}
+
 function sendJson(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
@@ -86,10 +99,15 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/api/chat") {
       const body = await parseJsonBody(req);
       const question = String(body.question || "").trim();
-      const history = Array.isArray(body.history) ? body.history : [];
+      const history = sanitizeHistory(body.history);
 
       if (question.length < 2) {
         sendJson(res, 400, { error: "Ask a question with at least two characters." });
+        return;
+      }
+
+      if (question.length > 2_000) {
+        sendJson(res, 400, { error: "Please ask a shorter question under 2,000 characters." });
         return;
       }
 

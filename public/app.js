@@ -2,6 +2,7 @@ const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#questionInput");
 const suggestions = document.querySelector("#suggestions");
+const suggestionToggle = document.querySelector("#suggestionToggle");
 const sourceList = document.querySelector("#sourceList");
 const catalogList = document.querySelector("#catalogList");
 const modeLabel = document.querySelector("#modeLabel");
@@ -157,7 +158,10 @@ async function boot() {
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = suggestion;
-    button.addEventListener("click", () => ask(suggestion));
+    button.addEventListener("click", () => {
+      closeSuggestions();
+      ask(suggestion);
+    });
     suggestions.append(button);
   }
 }
@@ -182,6 +186,25 @@ input.addEventListener("keydown", (event) => {
     event.preventDefault();
     form.requestSubmit();
   }
+});
+
+function closeSuggestions() {
+  suggestions.hidden = true;
+  suggestionToggle.setAttribute("aria-expanded", "false");
+}
+
+suggestionToggle.addEventListener("click", () => {
+  const willOpen = suggestions.hidden;
+  suggestions.hidden = !willOpen;
+  suggestionToggle.setAttribute("aria-expanded", String(willOpen));
+});
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".suggestion-menu")) closeSuggestions();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSuggestions();
 });
 
 clearButton.addEventListener("click", () => {

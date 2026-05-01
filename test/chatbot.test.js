@@ -26,6 +26,9 @@ test("routes common casual wording to focused sources", async () => {
     ["How do we add reviewers in the MR in GitLab?", "merge-request-reviewers"],
     ["How can we comment on the MR?", "merge-request-comments"],
     ["Can I resolve a thread in a merge request?", "merge-request-comments"],
+    ["What is a comment in GitLab?", "comments-discussions"],
+    ["What is comment?", "comments-discussions"],
+    ["Where can we comment on GitLab?", "comments-discussions"],
     ["Are we allowed to raise tickets in GitLab?", "issues-work-items"],
     ["How does GitLab handle CI/CD?", "ci-cd"],
     ["How does GitLab think about security?", "security-governance"],
@@ -99,6 +102,21 @@ test("answers broad GitLab overview questions", async () => {
   assert.notEqual(answer.confidence, "low");
   assert.equal(answer.sources[0].id, "gitlab-overview");
   assert.match(answer.answer, /DevSecOps platform/i);
+
+  const typoAnswer = await answerQuestion("whta is gitlab?");
+  assert.notEqual(typoAnswer.confidence, "low");
+  assert.equal(typoAnswer.sources[0].id, "gitlab-overview");
+});
+
+test("complete overview questions do not inherit stale topic history", async () => {
+  const history = [];
+  const first = await answerQuestion("How can we comment on the MR?", history);
+  history.push({ role: "user", content: "How can we comment on the MR?" });
+  history.push({ role: "assistant", content: first.answer });
+
+  const overview = await answerQuestion("what is gitlab?", history);
+  assert.equal(overview.sources[0].id, "gitlab-overview");
+  assert.ok(!overview.sources.slice(1).some((source) => source.id.includes("comment")));
 });
 
 test("async answer avoids duplicate lead sentence in bullets", async () => {

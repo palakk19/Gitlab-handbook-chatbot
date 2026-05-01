@@ -256,6 +256,22 @@
     "lastReviewed": "2026-05-01"
   },
   {
+    "id": "comments-discussions",
+    "title": "Comments and Discussions",
+    "category": "GitLab Docs",
+    "url": "https://docs.gitlab.com/user/discussions/",
+    "summary": "In GitLab, a comment is a note or discussion message attached to work such as an issue, merge request, commit, or snippet so people can ask questions, give feedback, mention teammates, and keep collaboration connected to the work item.",
+    "employeeUseCase": "A beginner can think of comments as the conversation layer in GitLab: use them to ask for clarification, leave implementation feedback, reply in threads, mention teammates with @username, and record context where the work is happening.",
+    "highlights": [
+      "Comments help keep questions and decisions connected to the issue, merge request, commit, or snippet they are about.",
+      "Discussions and threads separate different feedback items so conversations are easier to follow.",
+      "Mentions can bring specific teammates into a conversation when their input is needed.",
+      "Resolvable discussions help teams show when feedback has been addressed."
+    ],
+    "tags": ["gitlab", "comment", "comments", "note", "notes", "discussion", "discussions", "thread", "threads", "reply", "mention", "resolve", "issue comment", "merge request comment", "collaboration"],
+    "lastReviewed": "2026-05-01"
+  },
+  {
     "id": "merge-request-comments",
     "title": "Merge Request Comments and Discussions",
     "category": "GitLab Docs",

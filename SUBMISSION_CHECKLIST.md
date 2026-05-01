@@ -3,10 +3,10 @@
 Before submitting:
 
 - [ ] Create a GitHub repository and push the project.
-- [ ] Run `npm test` and confirm all tests pass.
-- [ ] Run `npm run eval` and save the passing output for your write-up.
+- [ ] Run `npm run verify` and confirm tests/evaluation pass.
 - [ ] Deploy the app and copy the public URL.
-- [ ] Add `OPENAI_API_KEY` or `GEMINI_API_KEY` to the deployment if you want generated wording.
+- [ ] Add `GEMINI_API_KEY` or `OPENAI_API_KEY` to the deployment if you want generated wording.
+- [ ] If using Gemini, confirm `GEMINI_MODEL=gemini-2.5-flash`.
 - [ ] Open the deployed URL on desktop and mobile.
 - [ ] Ask these smoke-test questions:
   - `How does GitLab make remote work effective?`

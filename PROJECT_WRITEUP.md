@@ -36,6 +36,7 @@ The system has three layers:
 - **Transparent UI**: the app displays source count, chunk count, mode, confidence, cited sources, and source sections.
 - **Guardrails**: unsupported questions return a low-confidence refusal, and prompt-injection attempts are blocked.
 - **Context-aware retrieval**: vague inputs like `MR`, `async`, or a random sentence containing `pipeline` ask for clarification instead of producing a canned answer.
+- **Reliable optional generation**: LLM calls have a timeout and fail back to deterministic retrieval, so the chatbot remains usable even if a provider is slow.
 - **Evaluation-first engineering**: `npm test` and `npm run eval` provide repeatable proof that the chatbot retrieves expected topics and rejects weak prompts.
 
 ## Product Thinking
@@ -53,6 +54,7 @@ Beyond the basic brief, the project adds:
 - prompt-injection guardrail;
 - query clarification and answerability scoring;
 - optional OpenAI and Gemini providers;
+- LLM timeout fallback for stable user interaction;
 - evaluation script with pass/fail criteria;
 - deploy-ready `render.yaml`;
 - architecture and deployment documentation.
@@ -70,7 +72,7 @@ The evaluation suite covers common project-success questions:
 Current result:
 
 ```text
-Positive evaluation: 14/14 passed
+Positive evaluation: 16/16 passed
 Negative/guardrail evaluation: 6/6 passed
 ```
 
@@ -104,3 +106,4 @@ Environment variables are optional:
 - `OPENAI_MODEL`
 - `GEMINI_API_KEY`
 - `GEMINI_MODEL`
+- `LLM_TIMEOUT_MS`

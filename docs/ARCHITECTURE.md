@@ -24,6 +24,7 @@ flowchart LR
 6. **Assess answerability**: require enough retrieved support before answering; otherwise return a low-confidence fallback.
 7. **Diversify sources**: prefer useful coverage across multiple source pages instead of repeating the same page.
 8. **Generate answer**: produce deterministic grounded wording, or call OpenAI/Gemini when an API key is available.
+   Optional LLM calls have a timeout and fall back to deterministic retrieval if the provider fails.
 9. **Expose evidence**: return source links, source sections, confidence, mode, and lightweight diagnostics.
 
 ## Why This Stands Out

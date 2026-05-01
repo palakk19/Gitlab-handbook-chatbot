@@ -120,7 +120,7 @@ h1 {
 
 h2 {
   max-width: 760px;
-  font-size: clamp(1.35rem, 2.2vw, 2.15rem);
+  font-size: 1.28rem;
   font-weight: 780;
 }
 
@@ -250,7 +250,7 @@ h2 {
 
 .chat-panel {
   display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   min-height: 0;
   height: calc(100vh - 36px);
   border-radius: 0 10px 10px 0;
@@ -262,8 +262,8 @@ h2 {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  align-items: start;
-  padding: 26px 28px 22px;
+  align-items: center;
+  padding: 16px 24px 14px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(21, 28, 41, 0.96), rgba(13, 17, 24, 0.96));
 }
@@ -299,7 +299,8 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 10px 28px;
+  align-items: center;
+  padding: 8px 24px;
   border-bottom: 1px solid var(--line);
   background: rgba(8, 10, 15, 0.35);
 }
@@ -315,44 +316,69 @@ h2 {
   font-weight: 780;
 }
 
-.suggestion-panel {
-  display: grid;
-  gap: 8px;
-  padding: 12px 28px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(13, 17, 24, 0.98);
+.suggestion-menu {
+  position: relative;
+  margin-left: auto;
+  flex: 0 0 auto;
 }
 
-.suggestion-panel p {
-  margin: 0;
-  color: var(--quiet);
-  font-size: 0.74rem;
-  font-weight: 820;
-  text-transform: uppercase;
+.suggestion-menu > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 29px;
+  border: 1px solid rgba(252, 109, 38, 0.34);
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: #ffd5c3;
+  background: rgba(252, 109, 38, 0.08);
+  cursor: pointer;
+  font-size: 0.73rem;
+  font-weight: 790;
+}
+
+.suggestion-menu > button:hover,
+.suggestion-menu > button[aria-expanded="true"] {
+  border-color: rgba(252, 109, 38, 0.58);
+  background: rgba(252, 109, 38, 0.15);
 }
 
 .suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: min(420px, 78vw);
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(13, 17, 24, 0.98);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.42);
+}
+
+.suggestions[hidden] {
+  display: none;
 }
 
 .suggestions button {
-  flex: 0 1 auto;
-  min-height: 36px;
-  border: 1px solid rgba(252, 109, 38, 0.28);
-  border-radius: 999px;
-  padding: 7px 12px;
-  white-space: nowrap;
-  background: rgba(252, 109, 38, 0.08);
-  color: #ffd5c3;
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid rgba(52, 65, 84, 0.72);
+  border-radius: 7px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: rgba(8, 10, 15, 0.56);
   cursor: pointer;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
+  text-align: left;
 }
 
 .suggestions button:hover {
   border-color: rgba(252, 109, 38, 0.55);
-  background: rgba(252, 109, 38, 0.14);
+  color: #ffd5c3;
+  background: rgba(252, 109, 38, 0.1);
 }
 
 .messages {
@@ -555,7 +581,6 @@ h2 {
     padding: 20px;
   }
 
-  .suggestion-panel,
   .system-bar {
     padding-right: 20px;
     padding-left: 20px;
@@ -587,10 +612,24 @@ h2 {
     grid-template-columns: 1fr 1fr;
   }
 
-  .suggestions button {
-    flex: 1 1 100%;
-    white-space: normal;
-    text-align: left;
+  .system-bar {
+    gap: 6px;
+  }
+
+  .suggestion-menu {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .suggestion-menu > button {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .suggestions {
+    right: auto;
+    left: 0;
+    width: 100%;
   }
 
   .composer {

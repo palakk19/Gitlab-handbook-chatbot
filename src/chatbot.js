@@ -18,6 +18,7 @@ export { tokenize } from "./textProcessing.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sourcesPath = join(__dirname, "..", "data", "sources.json");
+const LLM_TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS || 12_000);
 
 let cachedIndex;
 
@@ -158,8 +159,9 @@ function bm25Score(queryTokens, chunk, idf, averageLength) {
 }
 
 function expandQueryTokens(question, historyContext) {
-  const topics = matchTopics(question);
-  const baseTokens = tokenize(historyContext ? `${question} ${historyContext}` : question);
+  const routedQuestion = historyContext ? `${question} ${historyContext}` : question;
+  const topics = matchTopics(routedQuestion);
+  const baseTokens = tokenize(routedQuestion);
   const expansionTokens = topics.flatMap((topic) => tokenize(topic.expansions.join(" ")));
   return {
     topics,
@@ -180,13 +182,14 @@ function rerankForDiversity(scoredChunks) {
 
 function retrieve(question, history = [], limit = 6) {
   return loadIndex().then((index) => {
-    const queryProfile = analyzeQuery(question);
     const historyContext = compactHistory(history, question);
+    const routedQuestion = historyContext ? `${question} ${historyContext}` : question;
+    const queryProfile = analyzeQuery(routedQuestion);
     const currentTokens = tokenize(question);
     const expandedQuery = expandQueryTokens(question, historyContext);
     const queryTokens = expandedQuery.tokens;
-    const intent = inferIntent(question);
-    const intents = inferIntents(question);
+    const intent = inferIntent(routedQuestion);
+    const intents = inferIntents(routedQuestion);
     const currentTokenSet = new Set(currentTokens);
     const meaningfulTokenSet = new Set(queryProfile.nonDomainTokens);
     const queryVector = vectorize(queryTokens, index.idf);
@@ -359,6 +362,9 @@ function inferFollowUp(question, intent, primary) {
   if (primary?.sourceId === "merge-request-comments") {
     return "So the short answer is yes: open the merge request, add a comment in the discussion area or on a changed line, and use threads to keep review feedback organized.";
   }
+  if (primary?.sourceId === "comments-discussions") {
+    return "In simple terms: a GitLab comment is how people discuss work directly where that work lives, instead of moving the context into a separate chat.";
+  }
   if (intent.id === "candidate" || normalized.includes("interview") || normalized.includes("candidate")) {
     return "For a candidate, the strongest signal is connecting your answer to GitLab's operating habits: document first, iterate quickly, preserve transparency, and tie work to measurable customer value.";
   }
@@ -412,6 +418,7 @@ async function generateWithOpenAI(question, matches, draftAnswer) {
       ],
       temperature: 0.2,
     }),
+    signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
   });
 
   if (!response.ok) return null;
@@ -427,7 +434,7 @@ async function generateWithGemini(question, matches, draftAnswer) {
     .slice(0, 6)
     .map((match, index) => `[${index + 1}] ${match.title} / ${match.section}\n${match.text}\n${match.url}`)
     .join("\n\n");
-  const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
@@ -445,6 +452,7 @@ async function generateWithGemini(question, matches, draftAnswer) {
         ],
         generationConfig: { temperature: 0.2 },
       }),
+      signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
     }
   );
 
@@ -454,10 +462,15 @@ async function generateWithGemini(question, matches, draftAnswer) {
 }
 
 async function maybeGenerateWithLlm(question, matches, draftAnswer) {
-  return (
-    (await generateWithOpenAI(question, matches, draftAnswer)) ||
-    (await generateWithGemini(question, matches, draftAnswer))
-  );
+  for (const generate of [generateWithOpenAI, generateWithGemini]) {
+    try {
+      const answer = await generate(question, matches, draftAnswer);
+      if (answer) return answer;
+    } catch {
+      // Keep retrieval mode reliable even when an optional LLM provider fails.
+    }
+  }
+  return null;
 }
 
 export function getSuggestions() {
@@ -512,6 +525,9 @@ export async function retrieveForEvaluation(question) {
 }
 
 export async function answerQuestion(question, history = []) {
+  const historyContext = compactHistory(history, question);
+  const routedQuestion = historyContext ? `${question} ${historyContext}` : question;
+
   if (hasPromptInjection(question)) {
     return {
       answer:
@@ -523,9 +539,9 @@ export async function answerQuestion(question, history = []) {
     };
   }
 
-  if (needsClarification(question)) {
+  if (needsClarification(routedQuestion)) {
     return {
-      answer: buildClarificationAnswer(question),
+      answer: buildClarificationAnswer(routedQuestion),
       confidence: "medium",
       sources: [],
       mode: "clarification",
@@ -533,7 +549,7 @@ export async function answerQuestion(question, history = []) {
     };
   }
 
-  if (!hasDomainSignal(question)) {
+  if (!hasDomainSignal(routedQuestion)) {
     return {
       answer:
         "I could not find enough support in the loaded GitLab Handbook and Direction material to answer that confidently. Try asking about what GitLab is, remote work, transparency, values, product direction, DevSecOps, GitLab Duo, or handbook-first work.",

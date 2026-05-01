@@ -60,7 +60,7 @@
         <div class="chat-header">
           <div>
             <p class="eyebrow">Employee research assistant</p>
-            <h2>Ask GitLab handbook and product-direction questions</h2>
+            <h2>GitLab Q&A</h2>
           </div>
           <div class="header-actions">
             <button id="clearButton" class="icon-button" aria-label="Clear conversation" title="Clear conversation">Reset</button>
@@ -72,11 +72,13 @@
           <span>Evidence cited</span>
           <span>Conversation aware</span>
           <span>Safety checked</span>
-        </div>
-
-        <div class="suggestion-panel" aria-label="Suggested questions">
-          <p>Suggested questions</p>
-          <div id="suggestions" class="suggestions"></div>
+          <div class="suggestion-menu" aria-label="Suggested questions">
+            <button id="suggestionToggle" type="button" aria-expanded="false" aria-controls="suggestions">
+              Suggested questions
+              <span aria-hidden="true">▾</span>
+            </button>
+            <div id="suggestions" class="suggestions" hidden></div>
+          </div>
         </div>
         <div id="messages" class="messages" aria-live="polite"></div>
 

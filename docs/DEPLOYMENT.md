@@ -10,8 +10,12 @@
 4. Add one optional environment variable:
    - `OPENAI_API_KEY` for OpenAI-generated final wording, or
    - `GEMINI_API_KEY` for Gemini-generated final wording.
+5. If using Gemini, keep:
+   - `GEMINI_MODEL=gemini-2.5-flash`
+6. Keep the default timeout unless you have a reason to change it:
+   - `LLM_TIMEOUT_MS=12000`
 
-The app works without either key in retrieval mode.
+The app works without either key in deterministic retrieval mode. If an optional LLM call fails or times out, the app still returns the grounded retrieval answer.
 
 ## Railway or Fly.io
 
@@ -26,8 +30,7 @@ The server reads `PORT` from the host environment.
 ## Local Production Check
 
 ```bash
-npm test
-npm run eval
+npm run verify
 PORT=3001 npm run start
 ```
 
