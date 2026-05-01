@@ -4,6 +4,7 @@ Before submitting:
 
 - [ ] Create a GitHub repository and push the project.
 - [ ] Run `npm run verify` and confirm tests/evaluation pass.
+- [ ] If refreshing knowledge, run `npm run ingest`, review generated source cards, copy only selected cards into `data/sources.json`, then run `npm run verify` again.
 - [ ] Deploy the app and copy the public URL.
 - [ ] Add `GEMINI_API_KEY` or `OPENAI_API_KEY` to the deployment if you want generated wording.
 - [ ] If using Gemini, confirm `GEMINI_MODEL=gemini-2.5-flash`.

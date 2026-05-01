@@ -3,5 +3,6 @@ node_modules/
 .env
 .env.local
 data/sources.generated.json
+data/ingestion-report.json
 npm-debug.log*
 coverage/

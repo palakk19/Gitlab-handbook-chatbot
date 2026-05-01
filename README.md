@@ -80,13 +80,23 @@ The model only receives retrieved source context and is instructed not to invent
 
 The curated source set lives in `data/sources.json`.
 
-To fetch public pages into a review file:
+To fetch controlled public GitLab pages into a review file:
 
 ```bash
 npm run ingest
 ```
 
-This writes `data/sources.generated.json`. Review generated content before merging because public pages include navigation and repeated text.
+This writes `data/sources.generated.json` and `data/ingestion-report.json`. The production chatbot does not read generated files automatically; review the generated source cards before copying selected entries into `data/sources.json`.
+
+Useful options:
+
+```bash
+npm run ingest -- --max-pages=10
+npm run ingest -- --no-crawl
+npm run ingest -- --dry-run --max-pages=6
+```
+
+See `docs/DATA_REFRESH.md` for the full review workflow.
 
 ## Project Structure
 
@@ -96,7 +106,7 @@ This writes `data/sources.generated.json`. Review generated content before mergi
 ├── docs/                    # Architecture and deployment notes
 ├── public/                  # Browser UI
 ├── scripts/evaluate.js      # Retrieval/answer quality evaluation
-├── scripts/ingest.js        # Public page ingestion helper
+├── scripts/ingest.js        # Controlled public page ingestion pipeline
 ├── src/chatbot.js           # RAG orchestration, ranking, answer generation
 ├── src/queryAnalysis.js     # Query intent, ambiguity, and clarification policy
 ├── src/ragConfig.js         # Domain rules, synonyms, topics, and intents

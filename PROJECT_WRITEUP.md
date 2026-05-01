@@ -27,6 +27,7 @@ The system has three layers:
 3. **Retrieval engine**: `src/chatbot.js` chunks each source into overview, evidence, and employee-use-case sections. It scores chunks using a hybrid retrieval method: BM25, TF-IDF cosine similarity, tag overlap, source weighting, query-intent boosts, and full-query overlap.
 4. **Answerability layer**: retrieved chunks are checked for topic support and meaningful overlap before the chatbot answers.
 5. **Answer layer**: the app creates a deterministic grounded answer from retrieved evidence. If `OPENAI_API_KEY` or `GEMINI_API_KEY` is configured, the top retrieved chunks are passed to the model for more natural final wording.
+6. **Knowledge refresh**: `scripts/ingest.js` can crawl controlled public GitLab pages into generated review files, so coverage can expand without automatically polluting production answers.
 
 ## Key Decisions
 
@@ -38,6 +39,7 @@ The system has three layers:
 - **Context-aware retrieval**: vague inputs like `MR`, `async`, or a random sentence containing `pipeline` ask for clarification instead of producing a canned answer.
 - **Reliable optional generation**: LLM calls have a timeout and fail back to deterministic retrieval, so the chatbot remains usable even if a provider is slow.
 - **Evaluation-first engineering**: `npm test` and `npm run eval` provide repeatable proof that the chatbot retrieves expected topics and rejects weak prompts.
+- **Review-first ingestion**: generated website content is written separately and must be reviewed before it is copied into the curated knowledge base.
 
 ## Product Thinking
 
@@ -55,6 +57,7 @@ Beyond the basic brief, the project adds:
 - query clarification and answerability scoring;
 - optional OpenAI and Gemini providers;
 - LLM timeout fallback for stable user interaction;
+- controlled GitLab page ingestion with generated review reports;
 - evaluation script with pass/fail criteria;
 - deploy-ready `render.yaml`;
 - architecture and deployment documentation.
@@ -80,7 +83,7 @@ Negative/guardrail evaluation: 6/6 passed
 
 The current knowledge base is curated for quality and review speed. A production version would add:
 
-- scheduled crawling of Handbook and Direction pages;
+- scheduled crawling of Handbook and Direction pages using the existing review-first ingestion pipeline;
 - heading-aware page chunking;
 - embeddings with a vector database;
 - source freshness monitoring;
