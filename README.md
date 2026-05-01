@@ -103,7 +103,7 @@ See `docs/DATA_REFRESH.md` for the full review workflow.
 ```text
 .
 ├── data/sources.json        # Curated GitLab Handbook and Direction knowledge base
-├── docs/                    # Architecture and deployment notes
+├── docs/                    # Architecture, diagrams, data refresh, and deployment notes
 ├── public/                  # Browser UI
 ├── scripts/evaluate.js      # Retrieval/answer quality evaluation
 ├── scripts/ingest.js        # Controlled public page ingestion pipeline

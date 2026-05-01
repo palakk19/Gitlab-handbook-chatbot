@@ -2,6 +2,8 @@
 
 ## System Overview
 
+For the full diagram set, see `docs/DIAGRAMS.md`.
+
 ```mermaid
 flowchart LR
   User["User / Candidate"] --> UI["Browser Chat UI"]
